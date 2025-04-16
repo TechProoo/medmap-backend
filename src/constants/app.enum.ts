@@ -9,16 +9,15 @@ const HELMET_OPTIONS: HelmetOptions = {
 
 const CORS_OPTIONS: CorsOptions = {
   origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization", "transaction-id"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 export const AppEnum = {
   PORT: configService.get(ENV.PORT) || "3000",
-  BASE_URL: configService.get("BASE_URL") || "http://localhost",
+  BASE_URL: configService.get(ENV.SERVER_URL) || "http://localhost",
   NODE_ENV: configService.get(ENV.NODE_ENV) || "development",
   CORS_OPTIONS,
   HELMET_OPTIONS,
   DATABASE_URL: configService.get(ENV.DATABASE_URL),
-  JWT_SECRET: configService.get(ENV.JWT_SECRET_KEY),
 };

@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Or your chosen database provider
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String        @id @default(cuid())
+  firstname   String
+  lastname    String
+  email       String        @unique
+  comments    Comment[]
+  userIllness UserIllness[]
+  histories   History[]
+}
+
+model ContactInfo {
+  id        String    @id @default(cuid())
+  address   String
+  phone     String
+  state     String
+  country   String
+  longitude Float // Representing location longitude
+  latitude  Float // Representing location latitude
+  pharmacy  Pharmacy? // Relation to Pharmacy (one-to-one)
+}
+
+model Pharmacy {
+  id           String      @id @default(cuid())
+  name         String
+  email        String      @unique
+  description  String?
+  logoUrl      String? // Field name adjusted for convention
+  shopImageUrl String? // Field name adjusted for convention
+  contactId    String      @unique // Foreign key for one-to-one
+  contactInfo  ContactInfo @relation(fields: [contactId], references: [id])
+  comments     Comment[]
+  drugs        Drug[]
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  text       String
+  pharmacyId String // Type changed to String
+  userId     String // Type changed to String
+  pharmacy   Pharmacy @relation(fields: [pharmacyId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@index([pharmacyId])
+  @@index([userId])
+}
+
+model Illness {
+  id           String        @id @default(cuid())
+  name         String        @unique
+  description  String?
+  symptoms     String[] // Using String array for symptoms
+  precautions  String[] // Using String array for precautions 
+  userIllness  UserIllness[]
+  illnessDrugs IllnessDrug[]
+}
+
+// Explicit many-to-many relation table for User and Illness
+model UserIllness {
+  userId    String // Type changed to String
+  illnessId String // Type changed to String
+  user      User    @relation(fields: [userId], references: [id])
+  illness   Illness @relation(fields: [illnessId], references: [id])
+
+  @@id([userId, illnessId]) // Composite primary key
+  @@index([userId])
+  @@index([illnessId])
+}
+
+model Drug {
+  id           String        @id @default(cuid())
+  name         String
+  description  String?
+  sideEffects  String[] // Using String array
+  pharmacyId   String // Type changed to String
+  expiryDate   DateTime // Using DateTime for timestamp
+  price        Float // Assuming price can have decimals
+  inStock      Boolean       @default(true)
+  pharmacy     Pharmacy      @relation(fields: [pharmacyId], references: [id])
+  illnessDrugs IllnessDrug[]
+
+  @@index([pharmacyId])
+}
+
+// Explicit many-to-many relation table for Illness and Drug
+model IllnessDrug {
+  illnessId String // Type changed to String
+  drugId    String // Type changed to String
+  illness   Illness @relation(fields: [illnessId], references: [id])
+  drug      Drug    @relation(fields: [drugId], references: [id])
+
+  @@id([illnessId, drugId]) // Composite primary key
+  @@index([illnessId])
+  @@index([drugId])
+}
+
+model History {
+  id     String  @id @default(cuid())
+  name   String? // Assuming name can be optional based on diagram comma
+  userId String // Type changed to String
+  user   User    @relation(fields: [userId], references: [id])
+  charts Chart[] // Relation to Chart
+
+  @@index([userId])
+}
+
+model Chart {
+  id          String   @id @default(cuid())
+  historyId   String // Type changed to String
+  userRequest String
+  aiResponse  String
+  createdAt   DateTime @default(now()) // Using DateTime with default
+  history     History  @relation(fields: [historyId], references: [id])
+
+  @@index([historyId])
+}

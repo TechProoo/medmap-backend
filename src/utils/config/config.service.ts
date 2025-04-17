@@ -4,9 +4,9 @@ import "dotenv/config";
 export class ConfigService implements ConfigInterface {
   private static instance: ConfigService;
   private config = process.env;
-  get<T = string>(key: ENV, defaultValue?: T | undefined): T | undefined {
+  get<T = string>(key: ENV, defaultValue?: T | undefined): T {
     const value = this.config[key];
-    return value !== undefined ? (value as T) : defaultValue;
+    return value !== undefined ? (value as T) : (defaultValue as T);
   }
 
   set<T = string>(key: ENV, value: T): void {

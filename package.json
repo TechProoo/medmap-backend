@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/server.js",
+  "type": "module",
   "scripts": {
     "dev": "tsx --watch src/server.ts",
     "start": "node dist/server.js",
@@ -16,6 +17,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@langchain/community": "^0.3.41",
+    "@langchain/core": "^0.3.45",
     "@prisma/client": "^6.4.1",
     "@solana/web3.js": "^1.98.0",
     "@types/cors": "^2.8.17",
@@ -24,9 +27,11 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cors": "^2.8.5",
+    "d3-dsv": "^2.0.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^8.0.0",
+    "langchain": "^0.3.22",
     "pg": "^8.13.3",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",

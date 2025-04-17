@@ -60,7 +60,7 @@ model Illness {
   id           String        @id @default(cuid())
   name         String        @unique
   description  String?
-  symptoms     String[] // Using String array for symptoms
+  symptoms     Json // Changed from String[] to Json. Expected structure: String[][] e.g., [["cough", "fever"], ["headache", "nausea"]]
   precautions  String[] // Using String array for precautions 
   userIllness  UserIllness[]
   illnessDrugs IllnessDrug[]

@@ -13,6 +13,12 @@ export class UserRepository {
     });
   }
 
+  async getUserByEmail(email: string) {
+    return await this.userDelegate.findUnique({
+      where: { email },
+    });
+  }
+
   async createUser(data: Prisma.UserCreateInput) {
     return await this.userDelegate.create({
       data,

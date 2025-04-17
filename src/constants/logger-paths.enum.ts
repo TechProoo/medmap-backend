@@ -1,7 +1,7 @@
 export enum LoggerPaths {
-  APP = "app",
-  USER = "user",
-  AUTH = "auth",
-  DATABASE = "database",
-  CLIENT = "client",
+  APP = "logs/app.log",
+  USER = "logs/user.log",
+  AUTH = "logs/auth.log",
+  DATABASE = "logs/database.log",
+  CLIENT = "logs/client.log",
 }

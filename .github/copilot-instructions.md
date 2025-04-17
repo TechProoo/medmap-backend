@@ -1,12 +1,15 @@
 ## **🌟 General Coding Standards**
 
 - **Maintain Clean, Modular Code**: Keep functions and components small, reusable, and well-documented.
-- **Error Handling**: Always handle errors gracefully, especially in API calls and blockchain transactions.
+- **Error Handling**: Always handle errors gracefully, especially in API calls.
 - **Security First**: Never expose private keys, API secrets, or sensitive logic in the frontend.
 - Naming Conventions: Use meaningful names, using **Camel Case naming style.**
 - **Follow Existing Convetions:** This nestjs project uses a controller, services,
 
-Most important: I use pnpm as my package manager always install packages with pnpm.
+Most important:
+
+- I use pnpm as my package manager always install packages with pnpm.
+- Everytime you implement a new endpoint update the swagger.json (My docs to reflect the new changes, ensure it's comprehensive)
 
 ### Brief of Project:
 

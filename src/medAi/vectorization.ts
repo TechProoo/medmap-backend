@@ -9,5 +9,13 @@ const embeddings = new CohereEmbeddings({
   model: "embed-v4.0",
 });
 
-const rawDocuments = await loadDocuments();
-const chunkedDocuments = await splitDocuments(rawDocuments);
+loadDocuments()
+  .then((rawDocuments) => {
+    console.log("Loaded documents:", rawDocuments);
+    return rawDocuments;
+  })
+  .then(async (rawDocuments) => {
+    const documentChunks = await splitDocuments(rawDocuments);
+    console.log("Split documents:", documentChunks);
+    return documentChunks;
+  });

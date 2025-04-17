@@ -9,6 +9,10 @@ export class UserService {
     return await userRepository.getUserById(userId);
   }
 
+  async getUserByEmail(email: string) {
+    return await userRepository.getUserByEmail(email);
+  }
+
   async createUser(data: Prisma.UserCreateInput) {
     try {
       return await userRepository.createUser(data);

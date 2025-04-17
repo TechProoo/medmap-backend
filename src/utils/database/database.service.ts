@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { LoggerPaths } from "../../constants/logger-paths.enum";
 import { JsPromise } from "@prisma/client/runtime/library";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService } from "../logger/logger.service";
 export class DatabaseService extends PrismaClient {
   private logger = new LoggerService(LoggerPaths.DATABASE);
   constructor() {

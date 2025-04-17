@@ -135,8 +135,8 @@ model Chart {
 }
 
 model documents {
-  id        String                       @id @default(uuid())
+  id        String                 @id @default(uuid())
   content   String
   metadata  Json
-  embedding Unsupported("vector(1024)")? // Define the vector type and dimension, make it optional
+  embedding Unsupported("vector")? // Define the vector type and dimension, make it optional
 }

@@ -7,9 +7,9 @@ export const loadDocuments = async () => {
     ".csv": (path) => new CSVLoader(path),
   });
   const docs = await loader.load();
-  console.log({ docs });
+  // console.log({ docs });
 
   return docs;
 };
 
-loadDocuments()
+// loadDocuments()

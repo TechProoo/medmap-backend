@@ -11,7 +11,8 @@
     "build-code": "tsc -p . && cp src/constants/*.json dist/constants",
     "db:migrate": "npx prisma migrate dev",
     "db:generate": "pnpm prisma generate",
-    "clean": "rm -rf dist/"
+    "clean": "rm -rf dist/",
+    "db:seed:illness": "tsx scripts/seed-illness.ts"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
     "d3-dsv": "^2.0.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

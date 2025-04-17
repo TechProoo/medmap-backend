@@ -16,6 +16,7 @@ model User {
   firstname   String
   lastname    String
   email       String        @unique
+  password    String
   comments    Comment[]
   userIllness UserIllness[]
   histories   History[]
@@ -35,6 +36,7 @@ model ContactInfo {
 model Pharmacy {
   id           String      @id @default(cuid())
   name         String
+  password     String
   email        String      @unique
   description  String?
   logoUrl      String? // Field name adjusted for convention

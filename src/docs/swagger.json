@@ -112,6 +112,103 @@
             }
           }
         }
+      },
+      "PharmacySignupDto": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "password",
+          "phone",
+          "address",
+          "state",
+          "country",
+          "longitude",
+          "latitude"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Pharmacy business name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Pharmacy email address"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "description": "Password for pharmacy account"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Pharmacy contact phone number"
+          },
+          "address": {
+            "type": "string",
+            "description": "Physical address of the pharmacy"
+          },
+          "state": {
+            "type": "string",
+            "description": "State where pharmacy is located"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country where pharmacy is located"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Pharmacy location longitude"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Pharmacy location latitude"
+          }
+        }
+      },
+      "PharmacyUpdateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Pharmacy business name"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Pharmacy contact phone number"
+          },
+          "address": {
+            "type": "string",
+            "description": "Physical address of the pharmacy"
+          },
+          "state": {
+            "type": "string",
+            "description": "State where pharmacy is located"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country where pharmacy is located"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Pharmacy location longitude"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Pharmacy location latitude"
+          },
+          "logo": {
+            "type": "string",
+            "format": "binary",
+            "description": "Pharmacy logo image file"
+          },
+          "shopImage": {
+            "type": "string",
+            "format": "binary",
+            "description": "Pharmacy shop front image file"
+          }
+        }
       }
     }
   },
@@ -256,6 +353,114 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/auth/pharmacy/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new pharmacy",
+        "description": "Create a new pharmacy account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PharmacySignupDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pharmacy registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pharmacy/{id}": {
+      "patch": {
+        "tags": ["Pharmacy"],
+        "summary": "Update pharmacy details",
+        "description": "Update pharmacy information including optional logo and shop image",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pharmacy ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PharmacyUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pharmacy updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Pharmacy not found"
           }
         }
       }

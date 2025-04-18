@@ -3,7 +3,7 @@ import helmet from "helmet";
 import cors from "cors";
 import { AppEnum } from "./constants/app.enum";
 import { errorHandler } from "./utils/middleware/error-handler.middleware";
-import { HomeController } from "./models/home/home.controller";
+import { HomeController } from "./modules/home/home.controller";
 import router from "./routes";
 import { LoggerService } from "./utils/logger/logger.service";
 import { LoggerPaths } from "./constants/logger-paths.enum";

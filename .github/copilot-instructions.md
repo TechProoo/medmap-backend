@@ -10,6 +10,7 @@ Most important:
 
 - I use pnpm as my package manager always install packages with pnpm.
 - Everytime you implement a new endpoint update the swagger.json (My docs to reflect the new changes, ensure it's comprehensive)
+- Before attempting to install  new dependency check if it already exists in package.json
 
 ### Brief of Project:
 

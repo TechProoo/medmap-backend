@@ -1,15 +1,21 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-
 import { JWTService } from "../../jwt/jwt.service";
-import { User } from "@prisma/client";
 import { UnauthorizedException } from "../../exceptions/unauthorized.exception";
-import { UserService } from "../../../modules/user/user.service";
+import { PharmacyRepository } from "../../../modules/pharmacy/pharmacy.repository";
 import { NotFoundException } from "../../exceptions/not-found.exception";
 import { BaseException } from "../../exceptions/base.exception";
 
-export class CustomerAuthGaurd {
+declare global {
+  namespace Express {
+    interface Request {
+      pharmacy?: import("@prisma/client").Pharmacy;
+    }
+  }
+}
+
+export class PharmacyAuthGuard {
   constructor(
-    private readonly userRepository: UserService,
+    private readonly pharmacyRepository: PharmacyRepository,
     private readonly jwtService: JWTService
   ) {}
 
@@ -17,13 +23,13 @@ export class CustomerAuthGaurd {
     (): RequestHandler =>
     async (request: Request, response: Response, next: NextFunction) => {
       try {
-        const user = await this.validateRequest(
+        const pharmacy = await this.validateRequest(
           request as unknown as {
             headers: { authorization: any };
           }
         );
 
-        request.user = user;
+        request.pharmacy = pharmacy;
         next();
       } catch (error) {
         next(error);
@@ -37,8 +43,7 @@ export class CustomerAuthGaurd {
 
   private async validateRequest(request: {
     headers: { authorization: any };
-  }): Promise<User> {
-    // 1. Ensure the Authorization header exists
+  }): Promise<any> {
     if (!request.headers.authorization) {
       throw new UnauthorizedException("Authorization header is missing");
     }
@@ -46,26 +51,38 @@ export class CustomerAuthGaurd {
     const auth = request.headers.authorization;
     const [scheme, token] = auth.split(" ");
 
-    // 2. Ensure we're using a Bearer token
     if (scheme !== "Bearer" || !token) {
       throw new UnauthorizedException("Invalid authorization token supplied");
     }
 
     try {
-      // 3. Verify JWT and load user
-      const { id } = this.getPayload(token);
-      const user = await this.userRepository.getUserById(id);
+      const { id, type } = this.getPayload(token);
 
-      if (!user) {
-        throw new NotFoundException("User not found");
+      // Verify that the token is for a pharmacy
+      if (type !== "pharmacy") {
+        throw new UnauthorizedException("Invalid token type");
       }
 
-      return user;
+      const pharmacy = await this.pharmacyRepository.getPharmacyById(id);
+
+      if (!pharmacy) {
+        throw new NotFoundException("Pharmacy not found");
+      }
+
+      return pharmacy;
     } catch (error) {
       if (error instanceof BaseException) {
         throw error;
       }
-      throw new UnauthorizedException("User not authorized");
+      throw new UnauthorizedException("Pharmacy not authorized");
     }
   }
 }
+
+// Create and export an instance with dependencies
+const pharmacyAuthGuard = new PharmacyAuthGuard(
+  new PharmacyRepository(),
+  new JWTService()
+);
+
+export { pharmacyAuthGuard };

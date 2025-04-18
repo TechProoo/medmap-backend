@@ -2,7 +2,7 @@ import { userRepository } from "./user.repository";
 import { Prisma } from "@prisma/client";
 import { LoggerService } from "../../utils/logger/logger.service";
 import { LoggerPaths } from "../../constants/logger-paths.enum";
-import { InternalServerErrorException } from "../../utils/exceptions/internal-server.exception";
+import { InternalServerException } from "../../utils/exceptions/internal-server.exception";
 export class UserService {
   constructor(private readonly logger: LoggerService) {}
   async getUserById(userId: string) {
@@ -18,7 +18,7 @@ export class UserService {
       return await userRepository.createUser(data);
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException("Failed to create user", error);
+      throw new InternalServerException("Failed to create user", error);
     }
   }
 }

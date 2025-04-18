@@ -7,12 +7,17 @@ import { LoggerService } from "../../utils/logger/logger.service";
 import { LoggerPaths } from "../../constants/logger-paths.enum";
 import { UnauthorizedException } from "../../utils/exceptions/unauthorized.exception";
 import { User } from "@prisma/client";
+import { PharmacyRepository } from "../pharmacy/pharmacy.repository";
+import { InvalidAccountException } from "../../utils/exceptions/invalid-account.exception";
+import { PharmacySignupDto } from "./dto/pharmacy-signup.dto";
 
 export class AuthService {
+  private readonly pharmacyRepository: PharmacyRepository;
   private bcryptService: BcryptService;
   private jwtService: JWTService;
 
   constructor(private readonly logger: LoggerService) {
+    this.pharmacyRepository = new PharmacyRepository();
     this.bcryptService = new BcryptService();
     this.jwtService = new JWTService();
   }
@@ -57,6 +62,41 @@ export class AuthService {
     }
 
     return this.generateAuthResponse(user);
+  }
+
+  async pharmacySignup(pharmacyData: PharmacySignupDto) {
+    // Check if pharmacy with email already exists
+    const existingPharmacy = await this.pharmacyRepository.getPharmacyByEmail(
+      pharmacyData.email
+    );
+
+    if (existingPharmacy) {
+      throw new InvalidAccountException(
+        "Pharmacy with this email already exists"
+      );
+    }
+
+    // Hash password
+    const hashedPassword = await this.bcryptService.hashPassword(
+      pharmacyData.password
+    );
+
+    // Create pharmacy with hashed password
+    const pharmacy = await this.pharmacyRepository.createPharmacy({
+      ...pharmacyData,
+      password: hashedPassword,
+    });
+
+    // Generate JWT token
+    const token = this.jwtService.signPayload({
+      id: pharmacy.id,
+      type: "pharmacy",
+    });
+
+    return {
+      pharmacy,
+      token,
+    };
   }
 }
 

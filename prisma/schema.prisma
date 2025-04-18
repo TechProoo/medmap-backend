@@ -93,6 +93,7 @@ model Drug {
   sideEffects  String[] // Using String array
   pharmacyId   String // Type changed to String
   expiryDate   DateTime // Using DateTime for timestamp
+  imageUrl     String?
   price        Float // Assuming price can have decimals
   inStock      Boolean       @default(true)
   pharmacy     Pharmacy      @relation(fields: [pharmacyId], references: [id])

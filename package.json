@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "tsx --watch src/server.ts",
     "start": "node dist/server.js",
-    "build": "npm install && npm run db:migrate && npm run build-code",
-    "build-code": "tsc -p . && cp src/constants/*.json dist/constants",
+    "build": "pnpm run build-code",
+    "build-code": "tsc -p . ",
     "db:migrate": "npx prisma migrate dev",
     "db:generate": "pnpm prisma generate",
     "clean": "rm -rf dist/",

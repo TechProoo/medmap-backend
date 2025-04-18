@@ -41,6 +41,14 @@ export class PharmacyRepository {
     });
   }
 
+  async getAllPharmacies(): Promise<Pharmacy[]> {
+    return databaseService.pharmacy.findMany({
+      include: {
+        contactInfo: true,
+      },
+    });
+  }
+
   async getPharmacyByEmail(email: string): Promise<Pharmacy | null> {
     return databaseService.pharmacy.findUnique({
       where: { email },

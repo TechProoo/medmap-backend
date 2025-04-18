@@ -87,15 +87,18 @@ model UserIllness {
 }
 
 model Drug {
-  id           String        @id @default(cuid())
-  name         String
-  description  String?
-  sideEffects  String[] // Using String array
-  pharmacyId   String // Type changed to String
-  expiryDate   DateTime // Using DateTime for timestamp
-  imageUrl     String?
-  price        Float // Assuming price can have decimals
-  inStock      Boolean       @default(true)
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  sideEffects String[] // Using String array
+  pharmacyId  String // Type changed to String
+  expiryDate  DateTime // Using DateTime for timestamp
+  imageUrl    String?
+  price       Float // Assuming price can have decimals
+  inStock     Boolean  @default(true)
+
+  createdAt    DateTime      @default(now()) // Using String for timestamp
+  updatedAt    DateTime      @updatedAt
   pharmacy     Pharmacy      @relation(fields: [pharmacyId], references: [id])
   illnessDrugs IllnessDrug[]
 

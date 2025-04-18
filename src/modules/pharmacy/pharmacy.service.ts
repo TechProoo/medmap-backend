@@ -50,6 +50,10 @@ export class PharmacyService {
     return pharmacy;
   }
 
+  async getAllPharmacies() {
+    return this.repository.getAllPharmacies();
+  }
+
   async updatePharmacyDetails(
     id: string,
     data: {

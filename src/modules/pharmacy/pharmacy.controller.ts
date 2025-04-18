@@ -4,6 +4,47 @@ import { HttpStatus } from "../../constants/http-status";
 import { ResponseDto } from "../../globalDto/response.dto";
 
 export class PharmacyController {
+  static async getAllPharmacies(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const pharmacies = await pharmacyService.getAllPharmacies();
+      res
+        .status(HttpStatus.OK)
+        .json(
+          ResponseDto.createSuccessResponse(
+            "Pharmacies retrieved successfully",
+            pharmacies
+          )
+        );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getPharmacyById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const pharmacy = await pharmacyService.getPharmacyById(id);
+      res
+        .status(HttpStatus.OK)
+        .json(
+          ResponseDto.createSuccessResponse(
+            "Pharmacy retrieved successfully",
+            pharmacy
+          )
+        );
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async updatePharmacyDetails(
     req: Request,
     res: Response,

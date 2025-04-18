@@ -9,6 +9,10 @@ const pharmacyRouter = Router();
 const logger = new LoggerService(LoggerPaths.APP);
 const fileUpload = new MulterMiddleware(logger);
 
+// Public routes
+pharmacyRouter.get("/", PharmacyController.getAllPharmacies);
+pharmacyRouter.get("/:id", PharmacyController.getPharmacyById);
+
 // Protected routes
 pharmacyRouter.use(pharmacyAuthGuard.authorise());
 

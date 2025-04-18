@@ -10,7 +10,7 @@ export class UserController {
   ) => {
     try {
       const userId = req.user!.id;
-      const user = await userService.getUserById(userId);
+      const user = await userService.findOne(userId);
       let responseObj = ResponseDto.createSuccessResponse(
         "User profile fetched successfully",
         user

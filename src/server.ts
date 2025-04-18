@@ -1,3 +1,4 @@
+import "reflect-metadata"; // Add this line at the very top
 import { server } from "./app";
 import app from "./app";
 import { EnvValidation } from "./utils/config/env.validation";

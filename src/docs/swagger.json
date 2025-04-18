@@ -115,17 +115,7 @@
       },
       "PharmacySignupDto": {
         "type": "object",
-        "required": [
-          "name",
-          "email",
-          "password",
-          "phone",
-          "address",
-          "state",
-          "country",
-          "longitude",
-          "latitude"
-        ],
+        "required": ["name", "email", "password", "phone", "contactInfo"],
         "properties": {
           "name": {
             "type": "string",
@@ -141,29 +131,46 @@
             "minLength": 6,
             "description": "Password for pharmacy account"
           },
-          "phone": {
+          "description": {
             "type": "string",
-            "description": "Pharmacy contact phone number"
+            "description": "What does pharmacy specialize in"
           },
-          "address": {
-            "type": "string",
-            "description": "Physical address of the pharmacy"
-          },
-          "state": {
-            "type": "string",
-            "description": "State where pharmacy is located"
-          },
-          "country": {
-            "type": "string",
-            "description": "Country where pharmacy is located"
-          },
-          "longitude": {
-            "type": "number",
-            "description": "Pharmacy location longitude"
-          },
-          "latitude": {
-            "type": "number",
-            "description": "Pharmacy location latitude"
+          "contactInfo": {
+            "type": "object",
+            "required": [
+              "address",
+              "state",
+              "country",
+              "longitude",
+              "latitude",
+              "phone"
+            ],
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "Physical address of the pharmacy"
+              },
+              "state": {
+                "type": "string",
+                "description": "State where pharmacy is located"
+              },
+              "country": {
+                "type": "string",
+                "description": "Country where pharmacy is located"
+              },
+              "longitude": {
+                "type": "number",
+                "description": "Pharmacy location longitude"
+              },
+              "latitude": {
+                "type": "number",
+                "description": "Pharmacy location latitude"
+              },
+              "phone": {
+                "type": "string",
+                "description": "Contactable phone number"
+              }
+            }
           }
         }
       },
@@ -174,9 +181,9 @@
             "type": "string",
             "description": "Pharmacy business name"
           },
-          "phone": {
+          "description": {
             "type": "string",
-            "description": "Pharmacy contact phone number"
+            "description": "What does pharmacy specialize in"
           },
           "address": {
             "type": "string",
@@ -207,6 +214,226 @@
             "type": "string",
             "format": "binary",
             "description": "Pharmacy shop front image file"
+          }
+        }
+      },
+      "ContactInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "pharmacyId": {
+            "type": "string"
+          }
+        }
+      },
+      "Pharmacy": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "logoUrl": {
+            "type": "string",
+            "format": "url",
+            "nullable": true
+          },
+          "shopImageUrl": {
+            "type": "string",
+            "format": "url",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "contactInfo": {
+            "$ref": "#/components/schemas/ContactInfo"
+          }
+        }
+      },
+      "CreateDrugDto": {
+        "type": "object",
+        "required": [
+          "name",
+          "sideEffects",
+          "expiryDate",
+          "price",
+          "illnessIds"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the drug"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the drug"
+          },
+          "sideEffects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of side effects"
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiry date of the drug"
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Price of the drug"
+          },
+          "inStock": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether the drug is in stock"
+          },
+          "illnessIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of illness IDs this drug treats"
+          },
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "description": "Drug image file"
+          }
+        }
+      },
+      "DrugResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Drug"
+          }
+        }
+      },
+      "PaginatedDrugResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Drug"
+                }
+              },
+              "pagination": {
+                "type": "object",
+                "properties": {
+                  "total": {
+                    "type": "integer"
+                  },
+                  "page": {
+                    "type": "integer"
+                  },
+                  "limit": {
+                    "type": "integer"
+                  },
+                  "totalPages": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Drug": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sideEffects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pharmacyId": {
+            "type": "string"
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "inStock": {
+            "type": "boolean"
+          },
+          "pharmacy": {
+            "$ref": "#/components/schemas/Pharmacy"
+          },
+          "illnessDrugs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "illness": {
+                  "$ref": "#/components/schemas/Illness"
+                }
+              }
+            }
           }
         }
       }
@@ -461,6 +688,376 @@
           },
           "404": {
             "description": "Pharmacy not found"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Pharmacy"],
+        "summary": "Get pharmacy by ID",
+        "description": "Retrieve details for a specific pharmacy",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pharmacy ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Pharmacy"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pharmacy not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/pharmacy": {
+      "get": {
+        "tags": ["Pharmacy"],
+        "summary": "Get all pharmacies",
+        "description": "Retrieve a list of all registered pharmacies",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Pharmacy"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/drugs": {
+      "get": {
+        "tags": ["Drugs"],
+        "summary": "Get all drugs",
+        "description": "Retrieve all drugs with optional filters",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "illnessId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter drugs by illness ID"
+          },
+          {
+            "in": "query",
+            "name": "inStock",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Filter drugs by availability"
+          },
+          {
+            "in": "query",
+            "name": "minPrice",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Filter drugs by minimum price"
+          },
+          {
+            "in": "query",
+            "name": "maxPrice",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Filter drugs by maximum price"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrugResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Drugs"],
+        "summary": "Create a new drug",
+        "description": "Add a new drug to pharmacy inventory",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDrugDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Drug created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrugResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/drugs/search": {
+      "get": {
+        "tags": ["Drugs"],
+        "summary": "Search drugs with pagination",
+        "description": "Search for drugs with various filters and pagination",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by drug name"
+          },
+          {
+            "in": "query",
+            "name": "illnessId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by illness ID"
+          },
+          {
+            "in": "query",
+            "name": "inStock",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Filter by availability"
+          },
+          {
+            "in": "query",
+            "name": "minPrice",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Minimum price"
+          },
+          {
+            "in": "query",
+            "name": "maxPrice",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Maximum price"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedDrugResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drugs/{id}": {
+      "get": {
+        "tags": ["Drugs"],
+        "summary": "Get drug by ID",
+        "description": "Retrieve details for a specific drug",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Drug ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrugResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Drug not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Drugs"],
+        "summary": "Update drug",
+        "description": "Update drug details (pharmacy only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Drug ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDrugDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Drug updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrugResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Drug not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Drugs"],
+        "summary": "Delete drug",
+        "description": "Delete a drug (pharmacy only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Drug ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drug deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrugResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Drug not found"
           }
         }
       }

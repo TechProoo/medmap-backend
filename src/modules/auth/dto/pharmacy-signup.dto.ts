@@ -37,21 +37,21 @@ export class ContactInfoDto {
 export class PharmacySignupDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  declare name: string;
 
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  declare email: string;
 
   @IsString()
   @IsNotEmpty()
-  password: string;
+  declare password: string;
 
   @IsString()
   @IsOptional()
-  description?: string;
+  declare description?: string;
 
   @ValidateNested()
   @Type(() => ContactInfoDto)
-  contactInfo: ContactInfoDto;
+  declare contactInfo: ContactInfoDto;
 }

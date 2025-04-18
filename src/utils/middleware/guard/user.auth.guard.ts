@@ -54,7 +54,7 @@ export class CustomerAuthGaurd {
     try {
       // 3. Verify JWT and load user
       const { id } = this.getPayload(token);
-      const user = await this.userRepository.getUserById(id);
+      const user = await this.userRepository.findOne(id);
 
       if (!user) {
         throw new NotFoundException("User not found");

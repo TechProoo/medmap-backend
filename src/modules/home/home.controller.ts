@@ -12,15 +12,7 @@ export class HomeController {
     res.json(resObj);
   };
 
-  static notFound: RequestHandler = (
-    req: Request,
-    res: Response,
-    next: Function
-  ) => {
-    if (req.originalUrl.startsWith("/websocket")) {
-      console.log("not found", req.originalUrl);
-      next(); // Let Socket.io handle it
-    }
+  static notFound: RequestHandler = (req: Request) => {
     let msg = `Route ${req.originalUrl} was not found, please check route and try again`;
     throw new NotFoundException(msg);
   };

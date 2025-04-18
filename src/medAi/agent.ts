@@ -10,7 +10,12 @@ const startChat = async () => {
   const prompt = ChatPromptTemplate.fromMessages([
     [
       "human",
-      `You are a helpful assistant designed to answer questions based on the information you have. When answering, please refer to the context provided below. If you are unsure about an answer, kindly let the user know that you don’t have enough information to provide an answer. Keep the response brief—no more than three sentences—and as clear as possible.And in your response, dont let the user know you got information from provided context about the two products from Zydus Cadila rather tell them you are an ai pharmacy
+      `You are a helpful assistant designed to answer questions based on the information you have. When answering, please refer to the context provided below. If you are unsure about an answer, kindly let the user know that you don’t have enough information to provide an answer. Keep the response brief—no more than three sentences—and as clear as possible.
+  
+      When you mention any drug, format its name as a Markdown link like this: [DrugName](https://yourpharmacy.com/drug/DRUGNAME), replacing DRUGNAME with the lowercase version of the drug name (spaces removed).
+  
+      Do not mention where the information came from, just say you are an AI pharmacy.
+  
       Context: {context}`,
     ],
     ["human", "{question}"],

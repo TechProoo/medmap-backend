@@ -4,5 +4,6 @@ export enum ENV {
   CLIENT_URL = "CLIENT_URL",
   SERVER_URL = "SERVER_URL",
   NODE_ENV = "NODE_ENV",
+  JWT_SECRET_KEY = "JWT_SECRET_KEY",
   PORT = "PORT",
 }

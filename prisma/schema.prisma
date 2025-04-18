@@ -12,13 +12,19 @@ datasource db {
 }
 
 model User {
-  id          String        @id @default(cuid())
-  firstname   String
-  lastname    String
-  email       String        @unique
-  comments    Comment[]
-  userIllness UserIllness[]
-  histories   History[]
+  id        String   @id @default(uuid())
+  firstname String
+  lastname  String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments      Comment[]
+  userIllnesses UserIllness[]
+  histories     History[]
+
+  @@index([email])
 }
 
 model ContactInfo {
@@ -35,6 +41,7 @@ model ContactInfo {
 model Pharmacy {
   id           String      @id @default(cuid())
   name         String
+  password     String
   email        String      @unique
   description  String?
   logoUrl      String? // Field name adjusted for convention
@@ -125,4 +132,11 @@ model Chart {
   history     History  @relation(fields: [historyId], references: [id])
 
   @@index([historyId])
+}
+
+model documents {
+  id        String                 @id @default(uuid())
+  content   String
+  metadata  Json
+  embedding Unsupported("vector")? // Define the vector type and dimension, make it optional
 }

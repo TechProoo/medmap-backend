@@ -321,10 +321,11 @@
             "minimum": 0,
             "description": "Price of the drug"
           },
-          "inStock": {
-            "type": "boolean",
-            "default": true,
-            "description": "Whether the drug is in stock"
+          "stocks": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 1,
+            "description": "Number of units in stock"
           },
           "illnessIds": {
             "type": "array",
@@ -418,8 +419,9 @@
           "price": {
             "type": "number"
           },
-          "inStock": {
-            "type": "boolean"
+          "stocks": {
+            "type": "integer",
+            "description": "Number of units in stock"
           },
           "pharmacy": {
             "$ref": "#/components/schemas/Pharmacy"
@@ -623,6 +625,62 @@
         }
       }
     },
+    "/auth/pharmacy/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login pharmacy",
+        "description": "Authenticate pharmacy and get token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "pharmacy": {
+                          "$ref": "#/components/schemas/Pharmacy"
+                        },
+                        "token": {
+                          "type": "string",
+                          "description": "JWT authentication token"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/pharmacy/{id}": {
       "patch": {
         "tags": ["Pharmacy"],
@@ -691,6 +749,7 @@
           }
         }
       },
+
       "get": {
         "tags": ["Pharmacy"],
         "summary": "Get pharmacy by ID",
@@ -706,6 +765,47 @@
             "description": "Pharmacy ID"
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Pharmacy"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pharmacy not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/pharmacy/profile": {
+      "get": {
+        "tags": ["Pharmacy"],
+        "summary": "Get pharmacy Profile",
+        "description": "Retrieve details for a specific pharmacy",
+
         "responses": {
           "200": {
             "description": "Success",
@@ -790,11 +890,21 @@
           },
           {
             "in": "query",
-            "name": "inStock",
+            "name": "minStocks",
             "schema": {
-              "type": "boolean"
+              "type": "integer",
+              "minimum": 0
             },
-            "description": "Filter drugs by availability"
+            "description": "Filter drugs by minimum stock level"
+          },
+          {
+            "in": "query",
+            "name": "maxStocks",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Filter drugs by maximum stock level"
           },
           {
             "in": "query",
@@ -904,11 +1014,21 @@
           },
           {
             "in": "query",
-            "name": "inStock",
+            "name": "minStocks",
             "schema": {
-              "type": "boolean"
+              "type": "integer",
+              "minimum": 0
             },
-            "description": "Filter by availability"
+            "description": "Filter by minimum stock level"
+          },
+          {
+            "in": "query",
+            "name": "maxStocks",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Filter by maximum stock level"
           },
           {
             "in": "query",
@@ -971,93 +1091,93 @@
           "404": {
             "description": "Drug not found"
           }
-        }
-      },
-      "patch": {
-        "tags": ["Drugs"],
-        "summary": "Update drug",
-        "description": "Update drug details (pharmacy only)",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Drug ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
+        },
+        "patch": {
+          "tags": ["Drugs"],
+          "summary": "Update drug",
+          "description": "Update drug details (pharmacy only)",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
               "schema": {
-                "$ref": "#/components/schemas/CreateDrugDto"
+                "type": "string"
+              },
+              "description": "Drug ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDrugDto"
+                }
               }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Drug updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DrugResponse"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Drug not found"
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "Drug updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DrugResponse"
+        "delete": {
+          "tags": ["Drugs"],
+          "summary": "Delete drug",
+          "description": "Delete a drug (pharmacy only)",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "Drug ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Drug deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DrugResponse"
+                  }
                 }
               }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Drug not found"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Drugs"],
-        "summary": "Delete drug",
-        "description": "Delete a drug (pharmacy only)",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
             },
-            "description": "Drug ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Drug deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DrugResponse"
-                }
-              }
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Drug not found"
             }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Drug not found"
           }
         }
       }

@@ -23,7 +23,12 @@ export class PharmacyController {
       next(error);
     }
   }
-
+  static async getProfile(req: Request, res: Response, next: NextFunction) {
+    const pharmacy = req.pharmacy!;
+    res
+      .status(HttpStatus.OK)
+      .json(ResponseDto.createSuccessResponse("User profile", pharmacy));
+  }
   static async getPharmacyById(
     req: Request,
     res: Response,

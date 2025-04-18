@@ -66,6 +66,26 @@ export class AuthController {
       next(error);
     }
   };
+
+  pharmacyLogin: RequestHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const loginData = req.body as LoginDto;
+      const result = await authService.pharmacyLogin(loginData);
+
+      const responseObj = ResponseDto.createSuccessResponse(
+        "Pharmacy login successful",
+        result
+      );
+
+      res.status(HttpStatus.OK).json(responseObj);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export const authController = new AuthController();

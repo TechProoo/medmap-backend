@@ -28,10 +28,17 @@ export class SearchDrugsDto {
   @IsOptional()
   illnessId?: string;
 
-  @IsBoolean()
+  @IsNumber()
   @IsOptional()
-  @Type(() => Boolean)
-  inStock?: boolean;
+  @Min(0)
+  @Type(() => Number)
+  minStocks?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  @Type(() => Number)
+  maxStocks?: number;
 
   @IsNumber()
   @IsOptional()

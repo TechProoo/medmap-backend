@@ -82,7 +82,8 @@ export class DrugService {
 
   async getAllDrugs(filters?: {
     illnessId?: string;
-    inStock?: boolean;
+    minStocks?: number;
+    maxStocks?: number;
     minPrice?: number;
     maxPrice?: number;
   }) {

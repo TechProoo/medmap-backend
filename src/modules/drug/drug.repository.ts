@@ -10,7 +10,7 @@ export class DrugRepository {
     expiryDate: Date;
     imageUrl?: string;
     price: number;
-    inStock: boolean;
+    stocks: number;
     illnessIds: string[];
   }): Promise<Drug> {
     const { illnessIds, ...drugData } = data;
@@ -45,11 +45,21 @@ export class DrugRepository {
     take?: number;
     name?: string;
     illnessId?: string;
-    inStock?: boolean;
+    minStocks?: number;
+    maxStocks?: number;
     minPrice?: number;
     maxPrice?: number;
   }) {
-    const { skip, take, name, illnessId, inStock, minPrice, maxPrice } = params;
+    const {
+      skip,
+      take,
+      name,
+      illnessId,
+      minStocks,
+      maxStocks,
+      minPrice,
+      maxPrice,
+    } = params;
 
     const where: Prisma.DrugWhereInput = {};
 
@@ -68,8 +78,14 @@ export class DrugRepository {
       };
     }
 
-    if (inStock !== undefined) {
-      where.inStock = inStock;
+    if (minStocks !== undefined || maxStocks !== undefined) {
+      where.stocks = {};
+      if (minStocks !== undefined) {
+        where.stocks.gte = minStocks;
+      }
+      if (maxStocks !== undefined) {
+        where.stocks.lte = maxStocks;
+      }
     }
 
     if (minPrice !== undefined || maxPrice !== undefined) {
@@ -111,7 +127,8 @@ export class DrugRepository {
 
   async getAllDrugs(filters?: {
     illnessId?: string;
-    inStock?: boolean;
+    minStocks?: number;
+    maxStocks?: number;
     minPrice?: number;
     maxPrice?: number;
   }) {
@@ -125,8 +142,14 @@ export class DrugRepository {
       };
     }
 
-    if (filters?.inStock !== undefined) {
-      where.inStock = filters.inStock;
+    if (filters?.minStocks !== undefined || filters?.maxStocks !== undefined) {
+      where.stocks = {};
+      if (filters?.minStocks !== undefined) {
+        where.stocks.gte = filters.minStocks;
+      }
+      if (filters?.maxStocks !== undefined) {
+        where.stocks.lte = filters.maxStocks;
+      }
     }
 
     if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
@@ -186,7 +209,7 @@ export class DrugRepository {
       expiryDate: Date;
       imageUrl: string;
       price: number;
-      inStock: boolean;
+      stocks: number;
       illnessIds: string[];
     }>
   ): Promise<Drug> {

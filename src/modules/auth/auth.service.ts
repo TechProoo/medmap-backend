@@ -98,6 +98,35 @@ export class AuthService {
       token,
     };
   }
+
+  async pharmacyLogin(data: LoginDto) {
+    const pharmacy = await this.pharmacyRepository.getPharmacyByEmail(
+      data.email
+    );
+    if (!pharmacy) {
+      throw new UnauthorizedException("Invalid email or password");
+    }
+
+    const isPasswordValid = await this.bcryptService.comparePassword(
+      data.password,
+      pharmacy.password
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException("Invalid email or password");
+    }
+
+    // Generate JWT token with pharmacy type
+    const token = this.jwtService.signPayload({
+      id: pharmacy.id,
+      type: "pharmacy",
+    });
+
+    return {
+      pharmacy,
+      token,
+    };
+  }
 }
 
 const loggerService = new LoggerService(LoggerPaths.AUTH);

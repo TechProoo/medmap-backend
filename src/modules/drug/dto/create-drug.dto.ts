@@ -32,9 +32,10 @@ export class CreateDrugDto {
   @Min(0)
   price: number;
 
-  @IsBoolean()
+  @IsNumber()
+  @Min(0)
   @IsOptional()
-  inStock: boolean = true;
+  stocks: number = 1;
 
   @IsArray()
   @IsString({ each: true })

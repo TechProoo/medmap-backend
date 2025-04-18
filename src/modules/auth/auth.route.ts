@@ -23,5 +23,10 @@ authRouter.post(
   validator.single(PharmacySignupDto),
   authController.pharmacySignup
 );
+authRouter.post(
+  "/pharmacy/login",
+  validator.single(LoginDto),
+  authController.pharmacyLogin
+);
 
 export default authRouter;

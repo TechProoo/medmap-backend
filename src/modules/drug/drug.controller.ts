@@ -42,10 +42,11 @@ export class DrugController {
 
   static async getAllDrugs(req: Request, res: Response, next: NextFunction) {
     try {
-      const { illnessId, inStock, minPrice, maxPrice } = req.query;
+      const { illnessId, minStocks, maxStocks, minPrice, maxPrice } = req.query;
       const drugs = await drugService.getAllDrugs({
         illnessId: illnessId as string,
-        inStock: inStock === "true",
+        minStocks: minStocks ? Number(minStocks) : undefined,
+        maxStocks: maxStocks ? Number(maxStocks) : undefined,
         minPrice: minPrice ? Number(minPrice) : undefined,
         maxPrice: maxPrice ? Number(maxPrice) : undefined,
       });

@@ -95,7 +95,7 @@ model Drug {
   expiryDate  DateTime // Using DateTime for timestamp
   imageUrl    String?
   price       Float // Assuming price can have decimals
-  inStock     Boolean  @default(true)
+  stocks      Int      @default(1)
 
   createdAt    DateTime      @default(now()) // Using String for timestamp
   updatedAt    DateTime      @updatedAt

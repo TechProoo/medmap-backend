@@ -6,6 +6,13 @@ import { UnauthorizedException } from "../../exceptions/unauthorized.exception";
 import { UserService } from "../../../modules/user/user.service";
 import { NotFoundException } from "../../exceptions/not-found.exception";
 import { BaseException } from "../../exceptions/base.exception";
+declare global {
+  namespace Express {
+    interface Request {
+      user?: import("@prisma/client").User;
+    }
+  }
+}
 
 export class CustomerAuthGaurd {
   constructor(

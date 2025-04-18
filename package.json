@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx --watch src/server.ts",
     "start": "node dist/server.js",
-    "build": "pnpm db:migrate && pnpm run build-code",
+    "build": "pnpm db:generate && pnpm run build-code",
     "build-code": "tsc -p . ",
     "db:migrate": "npx prisma migrate dev",
     "db:generate": "pnpm prisma generate",

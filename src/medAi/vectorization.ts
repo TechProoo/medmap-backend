@@ -1,3 +1,5 @@
+// PLEASE DO NOT RUN THIS FILE --- IT IS STRICTLY FOR UPDATING OUR VECTOR DATABASE
+
 import dotenv from "dotenv";
 import cliProgress from "cli-progress";
 import { loadDocuments } from "./loadDocuments";
@@ -48,4 +50,4 @@ dotenv.config();
 
   progressBar.stop();
   console.log("Chunked documents stored in pinecone.");
-})();
+});

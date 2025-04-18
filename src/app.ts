@@ -8,7 +8,7 @@ import router from "./routes";
 import { LoggerService } from "./utils/logger/logger.service";
 import { LoggerPaths } from "./constants/logger-paths.enum";
 import { createServer } from "http";
-import swaggerjsdoc from "swagger-jsdoc";
+import swaggerSpec from "./docs/swagger.json";
 import swaggerUi from "swagger-ui-express";
 
 const app = express();
@@ -24,7 +24,6 @@ export const server = createServer(app);
 app.use("/", router);
 const logger = new LoggerService(LoggerPaths.APP);
 
-import swaggerSpec from "./docs/swagger.json";
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(HomeController.notFound);

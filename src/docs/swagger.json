@@ -22,40 +22,20 @@
       "User": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "firstname": {
-            "type": "string"
-          },
-          "lastname": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "id": { "type": "string" },
+          "firstname": { "type": "string" },
+          "lastname": { "type": "string" },
+          "email": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
         }
       },
       "SignupDto": {
         "type": "object",
         "required": ["firstname", "lastname", "email", "password"],
         "properties": {
-          "firstname": {
-            "type": "string",
-            "description": "User's first name"
-          },
-          "lastname": {
-            "type": "string",
-            "description": "User's last name"
-          },
+          "firstname": { "type": "string", "description": "User's first name" },
+          "lastname": { "type": "string", "description": "User's last name" },
           "email": {
             "type": "string",
             "format": "email",
@@ -87,9 +67,7 @@
       "AuthResponse": {
         "type": "object",
         "properties": {
-          "user": {
-            "$ref": "#/components/schemas/User"
-          },
+          "user": { "$ref": "#/components/schemas/User" },
           "token": {
             "type": "string",
             "description": "JWT authentication token"
@@ -99,17 +77,11 @@
       "ErrorResponse": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
+          "message": { "type": "string" },
+          "status": { "type": "string" },
           "errors": {
             "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "items": { "type": "string" }
           }
         }
       },
@@ -117,10 +89,7 @@
         "type": "object",
         "required": ["name", "email", "password", "phone", "contactInfo"],
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Pharmacy business name"
-          },
+          "name": { "type": "string", "description": "Pharmacy business name" },
           "email": {
             "type": "string",
             "format": "email",
@@ -177,10 +146,7 @@
       "PharmacyUpdateDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Pharmacy business name"
-          },
+          "name": { "type": "string", "description": "Pharmacy business name" },
           "description": {
             "type": "string",
             "description": "What does pharmacy specialize in"
@@ -220,70 +186,32 @@
       "ContactInfo": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "address": {
-            "type": "string"
-          },
-          "phone": {
-            "type": "string"
-          },
-          "state": {
-            "type": "string"
-          },
-          "country": {
-            "type": "string"
-          },
-          "longitude": {
-            "type": "number"
-          },
-          "latitude": {
-            "type": "number"
-          },
-          "pharmacyId": {
-            "type": "string"
-          }
+          "id": { "type": "string" },
+          "address": { "type": "string" },
+          "phone": { "type": "string" },
+          "state": { "type": "string" },
+          "country": { "type": "string" },
+          "longitude": { "type": "number" },
+          "latitude": { "type": "number" },
+          "pharmacyId": { "type": "string" }
         }
       },
       "Pharmacy": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "logoUrl": {
-            "type": "string",
-            "format": "url",
-            "nullable": true
-          },
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "description": { "type": "string", "nullable": true },
+          "logoUrl": { "type": "string", "format": "url", "nullable": true },
           "shopImageUrl": {
             "type": "string",
             "format": "url",
             "nullable": true
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "contactInfo": {
-            "$ref": "#/components/schemas/ContactInfo"
-          }
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "contactInfo": { "$ref": "#/components/schemas/ContactInfo" }
         }
       },
       "CreateDrugDto": {
@@ -296,19 +224,14 @@
           "illnessIds"
         ],
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Name of the drug"
-          },
+          "name": { "type": "string", "description": "Name of the drug" },
           "description": {
             "type": "string",
             "description": "Description of the drug"
           },
           "sideEffects": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "description": "List of side effects"
           },
           "expiryDate": {
@@ -329,9 +252,7 @@
           },
           "illnessIds": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "description": "List of illness IDs this drug treats"
           },
           "image": {
@@ -344,44 +265,28 @@
       "DrugResponse": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/Drug"
-          }
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Drug" }
         }
       },
       "PaginatedDrugResponse": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string"
-          },
+          "message": { "type": "string" },
           "data": {
             "type": "object",
             "properties": {
               "data": {
                 "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Drug"
-                }
+                "items": { "$ref": "#/components/schemas/Drug" }
               },
               "pagination": {
                 "type": "object",
                 "properties": {
-                  "total": {
-                    "type": "integer"
-                  },
-                  "page": {
-                    "type": "integer"
-                  },
-                  "limit": {
-                    "type": "integer"
-                  },
-                  "totalPages": {
-                    "type": "integer"
-                  }
+                  "total": { "type": "integer" },
+                  "page": { "type": "integer" },
+                  "limit": { "type": "integer" },
+                  "totalPages": { "type": "integer" }
                 }
               }
             }
@@ -391,49 +296,28 @@
       "Drug": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
           "sideEffects": {
             "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "items": { "type": "string" }
           },
-          "pharmacyId": {
-            "type": "string"
-          },
-          "expiryDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "imageUrl": {
-            "type": "string"
-          },
-          "price": {
-            "type": "number"
-          },
+          "pharmacyId": { "type": "string" },
+          "expiryDate": { "type": "string", "format": "date-time" },
+          "imageUrl": { "type": "string" },
+          "price": { "type": "number" },
           "stocks": {
             "type": "integer",
             "description": "Number of units in stock"
           },
-          "pharmacy": {
-            "$ref": "#/components/schemas/Pharmacy"
-          },
+          "pharmacy": { "$ref": "#/components/schemas/Pharmacy" },
           "illnessDrugs": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "illness": {
-                  "$ref": "#/components/schemas/Illness"
-                }
+                "illness": { "$ref": "#/components/schemas/Illness" }
               }
             }
           }
@@ -441,6 +325,11 @@
       }
     }
   },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "paths": {
     "/api/users": {
       "get": {

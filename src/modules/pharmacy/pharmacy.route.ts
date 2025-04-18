@@ -11,7 +11,6 @@ const fileUpload = new MulterMiddleware(logger);
 
 // Public routes
 pharmacyRouter.get("/", PharmacyController.getAllPharmacies);
-pharmacyRouter.get("/:id", PharmacyController.getPharmacyById);
 
 pharmacyRouter.patch(
   "/:id",
@@ -26,4 +25,7 @@ pharmacyRouter.get(
   pharmacyAuthGuard.authorise(),
   PharmacyController.getProfile
 );
+
+pharmacyRouter.get("/:id", PharmacyController.getPharmacyById);
+
 export default pharmacyRouter;

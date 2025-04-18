@@ -62,6 +62,7 @@ export class PharmacyAuthGuard {
       if (type !== "pharmacy") {
         throw new UnauthorizedException("Invalid token type");
       }
+      console.log("pharmacy id", id);
 
       const pharmacy = await this.pharmacyRepository.getPharmacyById(id);
 

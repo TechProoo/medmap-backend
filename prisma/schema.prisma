@@ -138,9 +138,9 @@ model Chart {
   @@index([historyId])
 }
 
-model documents {
-  id        String                 @id @default(uuid())
-  content   String
-  metadata  Json
-  embedding Unsupported("vector")? // Define the vector type and dimension, make it optional
-}
+// model documents {
+//   id        String                 @id @default(uuid())
+//   content   String
+//   metadata  Json
+//   embedding Unsupported("vector")? // Define the vector type and dimension, make it optional
+// }

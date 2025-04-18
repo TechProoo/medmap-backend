@@ -2,16 +2,17 @@
   "name": "medmap-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
     "dev": "tsx --watch src/server.ts",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "build": "pnpm db:generate && pnpm run build-code",
     "build-code": "tsc -p . ",
     "db:migrate": "npx prisma migrate dev",
     "db:generate": "pnpm prisma generate",
     "clean": "rm -rf dist/",
-    "db:seed:illness": "tsx scripts/seed-illness.ts"
+    "db:seed:illness": "tsx scripts/seed-illness.ts",
+    "db:reset": "npx prisma migrate reset"
   },
   "keywords": [],
   "author": "",

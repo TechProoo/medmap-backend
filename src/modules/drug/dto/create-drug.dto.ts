@@ -37,6 +37,20 @@ export class CreateDrugDto {
   @IsOptional()
   stocks: number = 1;
 
+  @IsString()
+  @IsOptional()
+  composition: string;
+
+  @IsString()
+  @IsOptional()
+  manufacturer: string;
+
+  @IsString()
+  @IsOptional()
+  uses: string;
+
+  @IsString()
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty()

@@ -12,6 +12,8 @@
     "db:generate": "pnpm prisma generate",
     "clean": "rm -rf dist/",
     "db:seed:illness": "tsx scripts/seed-illness.ts",
+    "db:seed:drugs": "tsx scripts/seed-drugs.ts",
+    "db:seed:pharmacies": "tsx scripts/seed-pharmacies.ts",
     "db:reset": "npx prisma migrate reset"
   },
   "keywords": [],

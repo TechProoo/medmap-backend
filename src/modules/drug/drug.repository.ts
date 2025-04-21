@@ -146,7 +146,7 @@ export class DrugRepository {
     // Re-order drugs based on idResults order (which respects rank)
     const orderedDrugs = drugIds
       .map((id) => drugs.find((d) => d.id === id))
-      .filter((d): d is Drug => d !== undefined);
+      .filter((d) => d !== undefined);
 
     return { drugs: orderedDrugs, total };
   }

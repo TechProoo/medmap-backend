@@ -65,7 +65,7 @@ export class DrugService {
 
     const result = await this.repository.searchDrugs({
       skip,
-      take: limit,
+      take: Number(limit),
       ...filters,
     });
 

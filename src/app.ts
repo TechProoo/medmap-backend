@@ -10,6 +10,7 @@ import { LoggerPaths } from "./constants/logger-paths.enum";
 import { createServer } from "http";
 import swaggerSpec from "./docs/swagger.json";
 import swaggerUi from "swagger-ui-express";
+import { Server } from "socket.io";
 
 const app = express();
 app.set("port", AppEnum.PORT || 3000);
@@ -19,10 +20,15 @@ app.use(helmet(AppEnum.HELMET_OPTIONS));
 app.use(cors(AppEnum.CORS_OPTIONS));
 
 export const server = createServer(app);
+const io = new Server(server);
 
 // declaring routes
 app.use("/", router);
 const logger = new LoggerService(LoggerPaths.APP);
+
+io.on("connection", (socket) => {
+  console.log("✅ User connected:", socket.id);
+});
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

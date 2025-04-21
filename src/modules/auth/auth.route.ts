@@ -13,6 +13,7 @@ authRouter.post(
   validator.single(SignupDto),
   authController.signup
 );
+
 authRouter.post(
   "/user/login",
   validator.single(LoginDto),

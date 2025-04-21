@@ -20,7 +20,13 @@ app.use(helmet(AppEnum.HELMET_OPTIONS));
 app.use(cors(AppEnum.CORS_OPTIONS));
 
 export const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173", // replace with your frontend's actual URL
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 
 // declaring routes
 app.use("/", router);

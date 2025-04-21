@@ -26,8 +26,18 @@ const io = new Server(server);
 app.use("/", router);
 const logger = new LoggerService(LoggerPaths.APP);
 
+let botReply = "Hello from MedAi!";
 io.on("connection", (socket) => {
   console.log("✅ User connected:", socket.id);
+
+  socket.on("user-message", async ({ message }) => {
+    console.log("from medAi frontend: ", message);
+    socket.emit("bot-message", { message: botReply });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
+  });
 });
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

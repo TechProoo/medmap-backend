@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
   console.log("✅ User connected:", socket.id);
 
   socket.on("user-message", async ({ message }) => {
-    console.log("from medAi frontend: ", message);
+    console.log("Test1: ", message);
     socket.emit("bot-message", { message: botReply });
   });
 

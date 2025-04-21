@@ -4,6 +4,7 @@ import userRouter from "./modules/user/user.route";
 import authRouter from "./modules/auth/auth.route";
 import pharmacyRouter from "./modules/pharmacy/pharmacy.route";
 import drugRouter from "./modules/drug/drug.route";
+import illnessRouter from "./modules/illness/illness.route";
 
 const router = Router();
 
@@ -13,5 +14,6 @@ router.use("/auth", authRouter);
 router.use("/user", userRouter);
 router.use("/pharmacy", pharmacyRouter);
 router.use("/drugs", drugRouter);
+router.use("/illnesses", illnessRouter);
 
 export default router;

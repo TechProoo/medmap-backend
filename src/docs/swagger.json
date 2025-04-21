@@ -322,6 +322,72 @@
             }
           }
         }
+      },
+      "CreateIllnessDto": {
+        "type": "object",
+        "required": ["name", "symptoms", "precautions"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the illness"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the illness"
+          },
+          "symptoms": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "Array of symptom groups"
+          },
+          "precautions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of precautions for the illness"
+          }
+        }
+      },
+      "IllnessResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "symptoms": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "precautions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "illnessDrugs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrugResponse"
+            }
+          }
+        }
       }
     }
   },
@@ -1067,6 +1133,214 @@
             "404": {
               "description": "Drug not found"
             }
+          }
+        }
+      }
+    },
+    "/illnesses": {
+      "post": {
+        "tags": ["Illnesses"],
+        "summary": "Create a new illness",
+        "description": "Create a new illness with symptoms and precautions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIllnessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Illness created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IllnessResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Illnesses"],
+        "summary": "Get all illnesses",
+        "description": "Retrieve a list of all illnesses",
+        "responses": {
+          "200": {
+            "description": "List of illnesses retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IllnessResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/illnesses/{id}": {
+      "get": {
+        "tags": ["Illnesses"],
+        "summary": "Get illness by ID",
+        "description": "Retrieve an illness by its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Illness retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IllnessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Illness not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Illnesses"],
+        "summary": "Update illness",
+        "description": "Update an existing illness by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIllnessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Illness updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IllnessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Illness not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Illnesses"],
+        "summary": "Delete illness",
+        "description": "Delete an illness by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Illness deleted successfully"
+          },
+          "404": {
+            "description": "Illness not found"
+          }
+        }
+      }
+    },
+    "/illnesses/{illnessId}/drugs/{drugId}": {
+      "post": {
+        "tags": ["Illnesses"],
+        "summary": "Link drug to illness",
+        "description": "Link an existing drug to an illness",
+        "parameters": [
+          {
+            "name": "illnessId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "drugId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drug linked to illness successfully"
+          },
+          "404": {
+            "description": "Illness or drug not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Illnesses"],
+        "summary": "Unlink drug from illness",
+        "description": "Remove the link between a drug and an illness",
+        "parameters": [
+          {
+            "name": "illnessId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "drugId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drug unlinked from illness successfully"
+          },
+          "404": {
+            "description": "Illness or drug not found"
           }
         }
       }

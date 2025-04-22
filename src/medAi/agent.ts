@@ -1,108 +1,99 @@
-// import { createServer } from "http";
-// import express from "express";
-// import { Server } from "socket.io";
-// import readline from "readline";
-// import { ChatGroq } from "@langchain/groq";
-// import { StringOutputParser } from "@langchain/core/output_parsers";
-// import { createRetriever } from "./retriever";
-// import { RunnableSequence } from "@langchain/core/runnables";
-// import { formatDocumentsAsString } from "langchain/util/document";
-// import { ChatPromptTemplate } from "@langchain/core/prompts";
 
-// const app = express();
-// const server = createServer(app);
-// const io = new Server(server, {
-//   cors: {
-//     origin: "http://localhost:5173", // Your frontend URL
-//     methods: ["GET", "POST"],
-//     credentials: true,
-//   },
-// });
+import { ChatGroq } from "@langchain/groq";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { createRetriever } from "./retriever";
+import { RunnableSequence } from "@langchain/core/runnables";
+import { formatDocumentsAsString } from "langchain/util/document";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { Server as SocketIOServer } from "socket.io";
+import { server } from "../app"; // Adjust the import based on your project structure
 
-// let botReply = "Hello from MedAi!"; // Example bot reply (default)
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: "*", // Change to your frontend URL if you want to restrict CORS
+    methods: ["GET", "POST"],
+  },
+});
 
-// // Define your chatbot logic
-// const startChat = async (question: string, context: string) => {
-//   try {
-//     const prompt = ChatPromptTemplate.fromMessages([
-//       [
-//         "human",
-//         `You are a helpful assistant designed to answer questions based on the information you have. When answering, please refer to the context provided below. If you are unsure about an answer, kindly let the user know that you don’t have enough information to provide an answer. Keep the response brief—no more than three sentences—and as clear as possible.
+let botReply = "Hello from MedAi!"; // Example bot reply (default)
 
-//         When you mention any drug, format its name as a Markdown link like this: [DrugName](https://yourpharmacy.com/drug/DRUGNAME), replacing DRUGNAME with the lowercase version of the drug name (spaces removed).
+// Define your chatbot logic
+const startChat = async (question: string, context: string) => {
+  try {
+    const prompt = ChatPromptTemplate.fromMessages([
+      [
+        "human",
+        `You are a helpful assistant designed to answer questions based on the information you have. When answering, please refer to the context provided below. If you are unsure about an answer, kindly let the user know that you don’t have enough information to provide an answer. Keep the response brief—no more than three sentences—and as clear as possible.
 
-//         Do not mention where the information came from, just say you are an AI pharmacy.
+        When you mention any drug, format its name as a Markdown link like this: [DrugName](https://yourpharmacy.com/drug/DRUGNAME), replacing DRUGNAME with the lowercase version of the drug name (spaces removed).
 
-//         Context: {context}`,
-//       ],
-//       ["human", "{question}"],
-//     ]);
+        Do not mention where the information came from, just say you are an AI pharmacy.
 
-//     const llm = new ChatGroq({
-//       model: "llama-3.3-70b-versatile", // Ensure this model is correct and accessible
-//       temperature: 0,
-//     });
+        Context: {context}`,
+      ],
+      ["human", "{question}"],
+    ]);
 
-//     const outputParser = new StringOutputParser();
-//     const retriever = await createRetriever();
+    const llm = new ChatGroq({
+      model: "llama-3.3-70b-versatile", // Ensure this model is correct and accessible
+      temperature: 0,
+    });
 
-//     const retrievalChain = RunnableSequence.from([
-//       (input) => input.question,
-//       retriever,
-//     ]);
+    const outputParser = new StringOutputParser();
+    const retriever = await createRetriever();
 
-//     const generationChain = RunnableSequence.from([
-//       {
-//         question: (input) => input.question,
-//         context: (input) => formatDocumentsAsString(input.context),
-//       },
-//       prompt,
-//       llm,
-//       outputParser,
-//     ]);
+    const retrievalChain = RunnableSequence.from([
+      (input) => input.question,
+      retriever,
+    ]);
 
-//     const fullChain = RunnableSequence.from([
-//       async (input) => {
-//         const context = await retrievalChain.invoke(input);
-//         return { question: input.question, context };
-//       },
-//       generationChain,
-//     ]);
+    const generationChain = RunnableSequence.from([
+      {
+        question: (input) => input.question,
+        context: (input) => formatDocumentsAsString(input.context),
+      },
+      prompt,
+      llm,
+      outputParser,
+    ]);
 
-//     const result = await fullChain.invoke({ question, context });
-//     return result;
-//   } catch (error) {
-//     console.error("Error in startChat:", error);
-//     throw new Error("Failed to process the chat request.");
-//   }
-// };
+    const fullChain = RunnableSequence.from([
+      async (input) => {
+        const context = await retrievalChain.invoke(input);
+        return { question: input.question, context };
+      },
+      generationChain,
+    ]);
 
-// io.on("connection", (socket) => {
-//   console.log("✅ User connected:", socket.id);
+    const result = await fullChain.invoke({ question, context });
+    return result;
+  } catch (error) {
+    console.error("Error in startChat:", error);
+    throw new Error("Failed to process the chat request.");
+  }
+};
 
-//   socket.on("user-message", async ({ message, context }) => {
-//     try {
-//       console.log("User message:", message);
-//       console.log("Context:", context);
+io.on("connection", (socket) => {
+  console.log("✅ User connected:", socket.id);
 
-//       // Generate the bot's response
-//       const botResponse = await startChat(message, context);
+  socket.on("user-message", async ({ message, context }) => {
+    try {
+      console.log("User message:", message);
+      console.log("Context:", context);
 
-//       // Emit the bot's response back to the user
-//       socket.emit("bot-message", { message: botResponse });
-//     } catch (error) {
-//       console.error("Error handling user message:", error);
-//       socket.emit("bot-message", { message: "Sorry, something went wrong!" });
-//     }
-//   });
+      // Generate the bot's response
+      const botResponse = await startChat(message, context);
 
-//   socket.on("disconnect", () => {
-//     console.log("❌ User disconnected:", socket.id);
-//   });
-// });
+      // Emit the bot's response back to the user
+      socket.emit("bot-message", { message: botResponse });
+    } catch (error) {
+      console.error("Error handling user message:", error);
+      socket.emit("bot-message", { message: "Sorry, something went wrong!" });
+    }
+  });
 
-// // Start the server
-// const PORT = process.env.PORT || 3000;
-// server.listen(PORT, () => {
-//   console.log(`Server running on http://localhost:${PORT}`);
-// });
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
+  });
+});
+

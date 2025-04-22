@@ -21,15 +21,13 @@ drugRouter.get(
   DrugController.searchDrugs
 );
 drugRouter.get("/", DrugController.getAllDrugs);
+
+drugRouter.get("/me", pharmacyAuthGuard.authorise(), DrugController.getMyDrugs);
 drugRouter.get("/:id", DrugController.getDrugById);
-
-// Protected routes (Pharmacy only)
-drugRouter.use(pharmacyAuthGuard.authorise());
-
-drugRouter.get("/me", DrugController.getMyDrugs);
 
 drugRouter.post(
   "/",
+  pharmacyAuthGuard.authorise(),
   fileUpload.single("image", true), // drug image is optional
   validator.single(CreateDrugDto),
   DrugController.createDrug

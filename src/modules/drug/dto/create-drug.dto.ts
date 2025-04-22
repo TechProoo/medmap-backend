@@ -57,6 +57,7 @@ export class CreateDrugDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
+  @TransformStringToArray()
   @IsNotEmpty()
   illnessIds: string[];
 }

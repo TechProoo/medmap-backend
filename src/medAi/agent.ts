@@ -1,4 +1,6 @@
-import readline from "readline";
+import { createServer } from "http";
+import express from "express";
+import { Server } from "socket.io";
 import { ChatGroq } from "@langchain/groq";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { createRetriever } from "./retriever";
@@ -6,23 +8,34 @@ import { RunnableSequence } from "@langchain/core/runnables";
 import { formatDocumentsAsString } from "langchain/util/document";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
-const startChat = async () => {
+const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173", // Your frontend URL
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+// Define your chatbot logic
+const startChat = async (question: string, context: string) => {
   const prompt = ChatPromptTemplate.fromMessages([
     [
       "human",
       `You are a helpful assistant designed to answer questions based on the information you have. When answering, please refer to the context provided below. If you are unsure about an answer, kindly let the user know that you don’t have enough information to provide an answer. Keep the response brief—no more than three sentences—and as clear as possible.
-  
+
       When you mention any drug, format its name as a Markdown link like this: [DrugName](https://yourpharmacy.com/drug/DRUGNAME), replacing DRUGNAME with the lowercase version of the drug name (spaces removed).
-  
+
       Do not mention where the information came from, just say you are an AI pharmacy.
-  
+
       Context: {context}`,
     ],
     ["human", "{question}"],
   ]);
 
   const llm = new ChatGroq({
-    model: "llama-3.3-70b-versatile", // Make sure this model is correct and accessible
+    model: "llama-3.3-70b-versatile", // Ensure this model is correct and accessible
     temperature: 0,
   });
 
@@ -52,38 +65,39 @@ const startChat = async () => {
     generationChain,
   ]);
 
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  console.log("💬 Ask me anything about medications! Type 'exit' to quit.\n");
-
-  // Recursive function to handle user input and responses
-  const askQuestion = () => {
-    rl.question("👤 You: ", async (userInput) => {
-      if (userInput.toLowerCase() === "exit") {
-        console.log("👋 Goodbye!");
-        rl.close();
-        return;
-      }
-
-      try {
-        // Get the answer by invoking the fullChain with the user input
-        const answer = await fullChain.invoke({ question: userInput });
-        console.log("🤖 MedMap:", answer);
-      } catch (err) {
-        console.error("❌ Error processing your question:", err.message);
-      }
-
-      // Ask another question
-      askQuestion();
-    });
-  };
-
-  // Start the chat loop
-  askQuestion();
+  const result = await fullChain.invoke({ question, context });
+  return result;
 };
 
-// Start the chat
-startChat();
+// Handle socket connections
+io.on("connection", (socket) => {
+  console.log("✅ User connected:", socket.id);
+
+  socket.on("user-message", async ({ message, context }) => {
+    console.log("User message:", message);
+    console.log("Context:", context);
+
+    // If no credentials or context, ask to login
+    if (!context || context.trim() === "") {
+      socket.emit("bot-message", {
+        message: "Please login to use our AI bot.",
+      });
+      return;
+    }
+
+    // Generate the bot's response
+    const botResponse = await startChat(message, context);
+
+    // Emit the bot's response back to the user
+    socket.emit("bot-message", { message: botResponse });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
+  });
+});
+
+// Start the server
+server.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
+});

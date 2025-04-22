@@ -10,7 +10,6 @@ import { LoggerPaths } from "./constants/logger-paths.enum";
 import { createServer } from "http";
 import swaggerSpec from "./docs/swagger.json";
 import swaggerUi from "swagger-ui-express";
-import { Server } from "socket.io";
 
 const app = express();
 app.set("port", AppEnum.PORT || 3000);
@@ -20,31 +19,10 @@ app.use(helmet(AppEnum.HELMET_OPTIONS));
 app.use(cors(AppEnum.CORS_OPTIONS));
 
 export const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:5173", // replace with your frontend's actual URL
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
 
 // declaring routes
 app.use("/", router);
 const logger = new LoggerService(LoggerPaths.APP);
-
-let botReply = "Hello from MedAi!";
-io.on("connection", (socket) => {
-  console.log("✅ User connected:", socket.id);
-
-  socket.on("user-message", async ({ message }) => {
-    console.log("Test1: ", message);
-    socket.emit("bot-message", { message: botReply });
-  });
-
-  socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
-  });
-});
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

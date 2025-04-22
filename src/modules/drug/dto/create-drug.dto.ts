@@ -9,6 +9,7 @@ import {
   IsString,
   Min,
 } from "class-validator";
+import { TransformStringToArray } from "../../../utils/transformers/TransformStringToArray";
 
 export class CreateDrugDto {
   @IsString()
@@ -21,6 +22,7 @@ export class CreateDrugDto {
 
   @IsArray()
   @IsString({ each: true })
+  @TransformStringToArray()
   sideEffects: string[];
 
   @Type(() => Date)

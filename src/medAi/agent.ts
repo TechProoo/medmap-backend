@@ -14,7 +14,7 @@ export const startChat = async (question: string, context: string) => {
   
   If you don’t have enough information to answer a question, say so clearly. Keep all responses concise (no more than three sentences) and easy to understand.
   
-  When referencing a drug, format the name as a Markdown link like this: [DrugName](https://yourpharmacy.com/drug/drugname), where "drugname" is the lowercase version with spaces and special characters removed.
+  When referencing a drug, format the name as a Markdown link like this: [DrugName](https://yourpharmacy.com/drug/drugname), where "drugname" is the lowercase version with spaces and special characters removed. Note, only make the link if the drug name is mentioned in the context.
   
   Do not mention where the information came from or refer to the context explicitly.
   

@@ -15,6 +15,9 @@ export class DrugRepository {
     illnessIds: string[];
   }): Promise<Drug> {
     const { illnessIds, ...drugData } = data;
+    drugData.price = parseFloat(drugData.price.toString());
+    if (drugData.stocks)
+      drugData.stocks = parseInt(drugData.stocks.toString(), 10);
     return this.drugDelegate.create({
       data: {
         ...drugData,
@@ -148,7 +151,20 @@ export class DrugRepository {
       .map((id) => drugs.find((d) => d.id === id))
       .filter((d) => d !== undefined);
 
-    return { drugs: orderedDrugs, total };
+    const totalPages = Math.ceil(total / takeValue);
+    const currentPage = Math.floor(skipValue / takeValue) + 1;
+
+    return {
+      data: orderedDrugs,
+      pagination: {
+        hasMore: currentPage < totalPages,
+        hasPrev: currentPage > 1,
+        totalItems: total,
+        totalPages,
+        page: currentPage,
+        limit: takeValue,
+      },
+    };
   }
 
   async getAllDrugs(filters?: {

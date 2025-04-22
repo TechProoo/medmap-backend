@@ -87,6 +87,16 @@ export class IllnessService {
       throw error;
     }
   }
+
+  async searchIllnesses(params: {
+    page?: number;
+    limit?: number;
+    query?: string;
+  }) {
+    const { page = 1, limit = 10, query } = params;
+    const skip = (page - 1) * limit;
+    return this.repository.searchIllnesses({ skip, take: limit, query });
+  }
 }
 
 export const illnessService = new IllnessService();

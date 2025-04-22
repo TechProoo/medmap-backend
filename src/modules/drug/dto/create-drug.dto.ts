@@ -1,7 +1,6 @@
-import { Type } from "class-transformer";
+import { Transform } from "class-transformer";
 import {
   IsArray,
-  IsBoolean,
   IsDate,
   IsNotEmpty,
   IsNumber,
@@ -25,20 +24,20 @@ export class CreateDrugDto {
   @TransformStringToArray()
   sideEffects: string[];
 
-  @Type(() => Date)
   @IsDate()
   @IsNotEmpty()
+  @Transform(({ value }) => value && new Date(value))
   expiryDate: Date;
 
-  @IsNumber()
   @Min(0)
-  @Type(() => Number)
+  @IsNumber()
+  @Transform(({ value }) => value && parseFloat(value))
   price: number;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  @Type(() => Number)
+  @Transform(({ value }) => (value ? parseInt(value, 10) : 1))
   stocks: number = 1;
 
   @IsString()
@@ -53,11 +52,8 @@ export class CreateDrugDto {
   @IsOptional()
   uses: string;
 
-  @IsString()
-  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @TransformStringToArray()
-  @IsNotEmpty()
   illnessIds: string[];
 }

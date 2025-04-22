@@ -133,4 +133,29 @@ export class IllnessController {
       next(error);
     }
   }
+
+  static async searchIllnesses(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { page, limit, query } = req.query;
+      const result = await illnessService.searchIllnesses({
+        page: page ? parseInt(page as string) : undefined,
+        limit: limit ? parseInt(limit as string) : undefined,
+        query: query as string | undefined,
+      });
+      res
+        .status(HttpStatus.OK)
+        .json(
+          ResponseDto.createSuccessResponse(
+            "Illnesses retrieved successfully",
+            result
+          )
+        );
+    } catch (error) {
+      next(error);
+    }
+  }
 }

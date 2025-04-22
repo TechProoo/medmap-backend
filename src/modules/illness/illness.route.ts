@@ -12,10 +12,7 @@ router.post(
 );
 
 // Get all illnesses
-router.get("/", IllnessController.getAllIllnesses);
-
-// Get illness by ID
-router.get("/:id", IllnessController.getIllnessById);
+// router.get("/", IllnessController.getAllIllnesses);
 
 // Update illness
 router.put("/:id", IllnessController.updateIllness);
@@ -32,4 +29,9 @@ router.delete(
   IllnessController.unlinkDrugFromIllness
 );
 
+// Search illnesses
+router.get("/search", IllnessController.searchIllnesses);
+
+// Get illness by ID
+router.get("/:id", IllnessController.getIllnessById);
 export default router;

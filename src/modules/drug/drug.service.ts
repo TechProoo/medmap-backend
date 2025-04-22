@@ -22,10 +22,20 @@ export class DrugService {
 
   private async uploadImage(file: Express.Multer.File): Promise<string> {
     if (!file) {
-      throw new InvalidRequestBodyException("Image file is required");
+      throw new InvalidRequestBodyException("Valid image file is required");
     }
 
     try {
+      // If the file already has a path (URL), it means it was uploaded by multer-storage-cloudinary
+      if (file.path) {
+        return file.path;
+      }
+
+      // Otherwise, handle buffer-based upload
+      if (!file.buffer) {
+        throw new InvalidRequestBodyException("Invalid image file format");
+      }
+
       // Convert the buffer to base64
       const base64Image = file.buffer.toString("base64");
       const uploadResult = await cloudinary.uploader.upload(
@@ -37,7 +47,11 @@ export class DrugService {
 
       return uploadResult.secure_url;
     } catch (error) {
-      throw new InvalidRequestBodyException("Failed to upload drug image");
+      console.log("Cloudinary upload error:", error);
+      throw new InvalidRequestBodyException(
+        "Failed to upload drug image",
+        error.message
+      );
     }
   }
 

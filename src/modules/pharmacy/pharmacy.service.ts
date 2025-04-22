@@ -38,7 +38,11 @@ export class PharmacyService {
 
       return uploadResult.secure_url;
     } catch (error) {
-      throw new InvalidRequestBodyException("Failed to upload image");
+      console.log("Cloudinary upload error:", error);
+      throw new InvalidRequestBodyException(
+        "Failed to upload image",
+        error.message
+      );
     }
   }
 

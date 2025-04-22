@@ -16,6 +16,56 @@ export class IllnessRepository {
     });
   }
 
+  async searchIllnesses(params: {
+    skip?: number;
+    take?: number;
+    query?: string;
+  }) {
+    const { skip = 0, take = 10, query } = params;
+
+    const where: Prisma.IllnessWhereInput = {};
+    if (query) {
+      where.name = {
+        contains: query,
+        mode: "insensitive",
+      };
+    }
+
+    const [illnesses, total] = await databaseService.$transaction([
+      databaseService.illness.findMany({
+        where,
+        include: {
+          illnessDrugs: {
+            include: {
+              drug: true,
+            },
+          },
+        },
+        skip,
+        take,
+        orderBy: {
+          name: "asc",
+        },
+      }),
+      databaseService.illness.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / take);
+    const currentPage = Math.floor(skip / take) + 1;
+
+    return {
+      data: illnesses,
+      pagination: {
+        hasMore: currentPage < totalPages,
+        hasPrev: currentPage > 1,
+        totalItems: total,
+        totalPages,
+        page: currentPage,
+        limit: take,
+      },
+    };
+  }
+
   async getAllIllnesses(): Promise<Illness[]> {
     return databaseService.illness.findMany({
       include: {

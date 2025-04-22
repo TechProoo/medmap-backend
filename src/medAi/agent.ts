@@ -24,7 +24,7 @@ export const startChat = async (question: string, context: string) => {
   const llm = new ChatGroq({
     model: "llama-3.3-70b-versatile",
     temperature: 0,
-    apiKey: process.env.GROQ_API_KEY,
+    apiKey: "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",
   });
 
   const outputParser = new StringOutputParser();

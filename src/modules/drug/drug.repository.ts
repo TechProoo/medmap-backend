@@ -318,6 +318,27 @@ export class DrugRepository {
       },
     });
   }
+
+  async getDrugsByPharmacyId(pharmacyId: string) {
+    return databaseService.drug.findMany({
+      where: { pharmacyId },
+      include: {
+        pharmacy: {
+          include: {
+            contactInfo: true,
+          },
+        },
+        illnessDrugs: {
+          include: {
+            illness: true,
+          },
+        },
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+  }
 }
 
 export const drugRepository = new DrugRepository();

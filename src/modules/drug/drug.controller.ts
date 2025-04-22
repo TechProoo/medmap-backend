@@ -109,6 +109,23 @@ export class DrugController {
       next(error);
     }
   }
+
+  static async getMyDrugs(req: Request, res: Response, next: NextFunction) {
+    try {
+      const pharmacyId = req.pharmacy!.id;
+      const drugs = await drugService.getMyDrugs(pharmacyId);
+      res
+        .status(HttpStatus.OK)
+        .json(
+          ResponseDto.createSuccessResponse(
+            "Your drugs retrieved successfully",
+            drugs
+          )
+        );
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const drugController = new DrugController();

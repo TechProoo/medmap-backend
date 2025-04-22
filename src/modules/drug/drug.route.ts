@@ -26,6 +26,8 @@ drugRouter.get("/:id", DrugController.getDrugById);
 // Protected routes (Pharmacy only)
 drugRouter.use(pharmacyAuthGuard.authorise());
 
+drugRouter.get("/me", DrugController.getMyDrugs);
+
 drugRouter.post(
   "/",
   fileUpload.single("image", true), // drug image is optional

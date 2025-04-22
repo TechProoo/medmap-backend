@@ -1,6 +1,7 @@
 import { createServer } from "http";
 import express from "express";
 import { Server } from "socket.io";
+import readline from "readline";
 import { ChatGroq } from "@langchain/groq";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { createRetriever } from "./retriever";
@@ -17,6 +18,8 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+
+let botReply = "Hello from MedAi!"; // Example bot reply (default)
 
 // Define your chatbot logic
 const startChat = async (question: string, context: string) => {
@@ -66,24 +69,15 @@ const startChat = async (question: string, context: string) => {
   ]);
 
   const result = await fullChain.invoke({ question, context });
-  return result;
+  return result; 
 };
 
-// Handle socket connections
 io.on("connection", (socket) => {
   console.log("✅ User connected:", socket.id);
 
   socket.on("user-message", async ({ message, context }) => {
     console.log("User message:", message);
     console.log("Context:", context);
-
-    // If no credentials or context, ask to login
-    if (!context || context.trim() === "") {
-      socket.emit("bot-message", {
-        message: "Please login to use our AI bot.",
-      });
-      return;
-    }
 
     // Generate the bot's response
     const botResponse = await startChat(message, context);

@@ -72,7 +72,7 @@ const startChat = async (question: string, context: string) => {
   return result; 
 };
 
-io.on("connection", (socket) => {
+io.on("connect", (socket) => {
   console.log("✅ User connected:", socket.id);
 
   socket.on("user-message", async ({ message, context }) => {

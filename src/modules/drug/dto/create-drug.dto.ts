@@ -32,11 +32,13 @@ export class CreateDrugDto {
 
   @IsNumber()
   @Min(0)
+  @Type(() => Number)
   price: number;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
+  @Type(() => Number)
   stocks: number = 1;
 
   @IsString()

@@ -13,12 +13,11 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // Your frontend URL
+    origin: "http://localhost:5173", // Your frontend URL
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
-const PORT = process.env.PORT || 3000;
-
 
 let botReply = "Hello from MedAi!"; // Example bot reply (default)
 
@@ -93,6 +92,6 @@ io.on("connection", (socket) => {
 });
 
 // Start the server
-server.listen(PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log("Server running on http://localhost:3000");
 });

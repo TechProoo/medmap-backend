@@ -153,7 +153,6 @@ export class DrugRepository {
 
     const totalPages = Math.ceil(total / takeValue);
     const currentPage = Math.floor(skipValue / takeValue) + 1;
-
     return {
       data: orderedDrugs,
       pagination: {

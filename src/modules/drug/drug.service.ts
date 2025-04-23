@@ -83,15 +83,7 @@ export class DrugService {
       ...filters,
     });
 
-    return {
-      data: result.drugs,
-      pagination: {
-        total: result.total,
-        page,
-        limit,
-        totalPages: Math.ceil(result.total / limit),
-      },
-    };
+    return result;
   }
 
   async getAllDrugs(filters?: {

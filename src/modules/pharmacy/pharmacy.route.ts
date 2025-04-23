@@ -12,7 +12,7 @@ const fileUpload = new MulterMiddleware(logger);
 // Public routes
 pharmacyRouter.get("/", PharmacyController.getAllPharmacies);
 
-pharmacyRouter.patch(
+pharmacyRouter.put(
   "/:id",
   pharmacyAuthGuard.authorise(),
   fileUpload.single("logo", true), // logo is optional

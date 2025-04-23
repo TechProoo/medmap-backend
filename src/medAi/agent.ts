@@ -5,20 +5,24 @@ import { createRetriever } from "./retriever";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { formatDocumentsAsString } from "langchain/util/document";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { BufferMemory } from "langchain/memory";
+
+const memory = new BufferMemory({
+  returnMessages: true,
+  memoryKey: "chat_history",
+});
 
 export const startChat = async (question: string, context: string) => {
   const prompt = ChatPromptTemplate.fromMessages([
     [
-      "human",
+      "system",
       `You are a helpful AI pharmacy assistant. Your job is to answer user questions based on the provided context below. Do not offer medical advice or diagnosis—only factual information from the context.
-  
-  If you don’t have enough information to answer a question, say so clearly. Keep all responses concise (no more than three sentences) and easy to understand.
-  
-  When referencing a drug, format the name as a Markdown link like this: [DrugName](https://yourpharmacy.com/drug/drugname), where "drugname" is the lowercase version with spaces and special characters removed. Note, only make the link if the drug name is mentioned in the context.
-  
-  Do not mention where the information came from or refer to the context explicitly.
-  
-  Context: {context}`,
+
+If you don’t have enough information to answer a question, say so clearly. Keep all responses concise (no more than three sentences) and easy to understand.
+
+When referencing a drug, format the name as a Markdown link like this: [DrugName](https://yourpharmacy.com/drug/drugname), where "drugname" is the lowercase version with spaces and special characters removed. Note, only make the link if the drug name is mentioned in the context.
+
+Do not mention where the information came from or refer to the context explicitly.`,
     ],
     ["human", "{question}"],
   ]);
@@ -50,9 +54,19 @@ export const startChat = async (question: string, context: string) => {
   const fullChain = RunnableSequence.from([
     async (input) => {
       const context = await retrievalChain.invoke(input);
-      return { question: input.question, context };
+      const history = await memory.loadMemoryVariables({});
+      return {
+        question: input.question,
+        context,
+        chat_history: history.chat_history || [],
+      };
     },
     generationChain,
+    async (output) => {
+      // Save this interaction to memory
+      await memory.saveContext({ input: question }, { output });
+      return output;
+    },
   ]);
 
   const result = await fullChain.invoke({ question, context });

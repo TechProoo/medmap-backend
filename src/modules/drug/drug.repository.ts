@@ -14,7 +14,8 @@ export class DrugRepository {
     stocks: number;
     illnessIds: string[];
   }): Promise<Drug> {
-    const { illnessIds, ...drugData } = data;
+    const { illnessIds = [], ...drugData } = data;
+    console.log("illness ids", illnessIds);
     drugData.price = parseFloat(drugData.price.toString());
     if (drugData.stocks)
       drugData.stocks = parseInt(drugData.stocks.toString(), 10);

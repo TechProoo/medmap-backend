@@ -12,6 +12,12 @@ export class DrugController {
       const pharmacyId = req.pharmacy!.id;
       const image = req.file;
 
+      if (typeof data.illnessIds === "string") {
+        data.illnessIds = [data.illnessIds];
+      }
+      if (typeof data.sideEffects === "string") {
+        data.sideEffects = [data.sideEffects];
+      }
       const drug = await drugService.createDrug(pharmacyId, data, image);
       res
         .status(HttpStatus.CREATED)

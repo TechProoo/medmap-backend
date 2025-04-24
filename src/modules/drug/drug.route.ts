@@ -35,6 +35,7 @@ drugRouter.post(
 
 drugRouter.patch(
   "/:id",
+  pharmacyAuthGuard.authorise(),
   drugOwnershipGuard.authorise(),
   fileUpload.single("image", true), // drug image is optional
   validator.single(CreateDrugDto),
@@ -43,6 +44,7 @@ drugRouter.patch(
 
 drugRouter.delete(
   "/:id",
+  pharmacyAuthGuard.authorise(),
   drugOwnershipGuard.authorise(),
   DrugController.deleteDrug
 );

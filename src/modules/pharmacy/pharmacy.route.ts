@@ -16,7 +16,7 @@ pharmacyRouter.put(
   "/:id",
   pharmacyAuthGuard.authorise(),
   fileUpload.single("logo", true), // logo is optional
-  fileUpload.single("shop", true), // shop image is optional
+  // fileUpload.single("shop", true), // shop image is optional
   PharmacyController.updatePharmacyDetails
 );
 

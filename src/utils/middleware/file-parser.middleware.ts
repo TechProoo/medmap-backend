@@ -48,7 +48,12 @@ export class MulterMiddleware {
         next();
       } catch (err) {
         this.logger.error("Error Uploading Image", err);
+        console.log(optional, err);
         if (err instanceof multer.MulterError) {
+          console.log("MulterError", err);
+          if (optional) {
+            return next();
+          }
           next(new BadRequestException(err.message));
         }
         next(new InternalServerException("Error Uploading Image"));

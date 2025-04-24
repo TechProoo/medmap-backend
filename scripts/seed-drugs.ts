@@ -54,7 +54,7 @@ async function main() {
     for (const row of drugRows) {
       try {
         // Each drug will be added to 1-2 random pharmacies
-        const numPharmacies = Math.floor(Math.random() * 2) + 1;
+        const numPharmacies = Math.floor(Math.random() * 1) + 1;
         const selectedPharmacies = [...pharmacies]
           .sort(() => Math.random() - 0.5)
           .slice(0, numPharmacies);

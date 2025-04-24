@@ -19,6 +19,8 @@ export class PharmacyRepository {
     };
   }): Promise<Pharmacy> {
     const { contactInfo, ...pharmacyData } = data;
+    contactInfo.latitude = parseFloat(contactInfo.latitude.toString());
+    contactInfo.longitude = parseFloat(contactInfo.longitude.toString());
     return databaseService.pharmacy.create({
       data: {
         ...pharmacyData,
@@ -76,6 +78,10 @@ export class PharmacyRepository {
     }>
   ): Promise<Pharmacy> {
     const { contactInfo, ...pharmacyData } = data;
+    if (contactInfo) {
+      contactInfo.latitude = parseFloat(contactInfo.latitude.toString());
+      contactInfo.longitude = parseFloat(contactInfo.longitude.toString());
+    }
     return databaseService.pharmacy.update({
       where: { id },
       data: {

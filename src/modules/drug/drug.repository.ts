@@ -409,13 +409,37 @@ export class DrugRepository {
 
   async getDrugsByPharmacyId(
     pharmacyId: string,
-    { page = 1, limit = 10 }: { page?: number; limit?: number }
+    {
+      page = 1,
+      limit = 10,
+      all = false,
+    }: { page?: number; limit?: number; all?: boolean }
   ) {
     const skipValue = (page - 1) * limit;
     const takeValue = limit;
 
     const where: Prisma.DrugWhereInput = { pharmacyId };
-
+    if (all) {
+      // return all drugs without pagination
+      return databaseService.drug.findMany({
+        where,
+        include: {
+          pharmacy: {
+            include: {
+              contactInfo: true,
+            },
+          },
+          illnessDrugs: {
+            include: {
+              illness: true,
+            },
+          },
+        },
+        orderBy: {
+          name: "asc",
+        },
+      });
+    }
     const [drugs, total] = await databaseService.$transaction([
       databaseService.drug.findMany({
         where,

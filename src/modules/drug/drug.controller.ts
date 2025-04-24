@@ -113,10 +113,11 @@ export class DrugController {
   static async getMyDrugs(req: Request, res: Response, next: NextFunction) {
     try {
       const pharmacyId = req.pharmacy!.id;
-      const { page = 1, limit = 10 } = req.query;
+      const { page = 1, limit = 10, all = false } = req.query;
       const result = await drugService.getMyDrugs(pharmacyId, {
         page: Number(page),
         limit: Number(limit),
+        all: !!all,
       });
       res.status(HttpStatus.OK).json(
         ResponseDto.createSuccessResponse("Your drugs retrieved successfully", {

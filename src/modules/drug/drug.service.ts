@@ -142,14 +142,17 @@ export class DrugService {
     {
       page = 1,
       limit = 10,
+      all = false,
     }: {
       page?: number;
       limit?: number;
+      all?: boolean;
     }
   ) {
     return this.repository.getDrugsByPharmacyId(pharmacyId, {
       page,
       limit,
+      all,
     });
   }
 }

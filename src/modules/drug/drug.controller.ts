@@ -113,15 +113,17 @@ export class DrugController {
   static async getMyDrugs(req: Request, res: Response, next: NextFunction) {
     try {
       const pharmacyId = req.pharmacy!.id;
-      const drugs = await drugService.getMyDrugs(pharmacyId);
-      res
-        .status(HttpStatus.OK)
-        .json(
-          ResponseDto.createSuccessResponse(
-            "Your drugs retrieved successfully",
-            drugs
-          )
-        );
+      const { page = 1, limit = 10 } = req.query;
+      const result = await drugService.getMyDrugs(pharmacyId, {
+        page: Number(page),
+        limit: Number(limit),
+      });
+      res.status(HttpStatus.OK).json(
+        ResponseDto.createSuccessResponse("Your drugs retrieved successfully", {
+          data: result.data,
+          pagination: result.pagination,
+        })
+      );
     } catch (error) {
       next(error);
     }

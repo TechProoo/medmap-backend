@@ -131,7 +131,17 @@ export class DrugRepository {
     const total = Number(countResult[0].count);
 
     if (drugIds.length === 0) {
-      return { drugs: [], total: 0 };
+      return {
+        data: [],
+        pagination: {
+          hasMore: false,
+          hasPrev: false,
+          totalItems: 0,
+          totalPages: 0,
+          page: 1,
+          limit: takeValue,
+        },
+      };
     }
 
     // Fetch full drug data with relations using the IDs
@@ -149,7 +159,7 @@ export class DrugRepository {
     // Re-order drugs based on idResults order (which respects rank)
     const orderedDrugs = drugIds
       .map((id) => drugs.find((d) => d.id === id))
-      .filter((d) => d !== undefined);
+      .filter((d) => d !== undefined); // Type assertion
 
     const totalPages = Math.ceil(total / takeValue);
     const currentPage = Math.floor(skipValue / takeValue) + 1;
@@ -334,25 +344,53 @@ export class DrugRepository {
     });
   }
 
-  async getDrugsByPharmacyId(pharmacyId: string) {
-    return databaseService.drug.findMany({
-      where: { pharmacyId },
-      include: {
-        pharmacy: {
-          include: {
-            contactInfo: true,
+  async getDrugsByPharmacyId(
+    pharmacyId: string,
+    { page = 1, limit = 10 }: { page?: number; limit?: number }
+  ) {
+    const skipValue = (page - 1) * limit;
+    const takeValue = limit;
+
+    const where: Prisma.DrugWhereInput = { pharmacyId };
+
+    const [drugs, total] = await databaseService.$transaction([
+      databaseService.drug.findMany({
+        where,
+        skip: skipValue,
+        take: takeValue,
+        include: {
+          pharmacy: {
+            include: {
+              contactInfo: true,
+            },
+          },
+          illnessDrugs: {
+            include: {
+              illness: true,
+            },
           },
         },
-        illnessDrugs: {
-          include: {
-            illness: true,
-          },
+        orderBy: {
+          name: "asc",
         },
+      }),
+      databaseService.drug.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / takeValue);
+    const currentPage = page;
+
+    return {
+      data: drugs,
+      pagination: {
+        hasMore: currentPage < totalPages,
+        hasPrev: currentPage > 1,
+        totalItems: total,
+        totalPages,
+        page: currentPage,
+        limit: takeValue,
       },
-      orderBy: {
-        name: "asc",
-      },
-    });
+    };
   }
 }
 

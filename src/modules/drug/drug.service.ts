@@ -137,8 +137,20 @@ export class DrugService {
     return this.repository.deleteDrug(id);
   }
 
-  async getMyDrugs(pharmacyId: string) {
-    return this.repository.getDrugsByPharmacyId(pharmacyId);
+  async getMyDrugs(
+    pharmacyId: string,
+    {
+      page = 1,
+      limit = 10,
+    }: {
+      page?: number;
+      limit?: number;
+    }
+  ) {
+    return this.repository.getDrugsByPharmacyId(pharmacyId, {
+      page,
+      limit,
+    });
   }
 }
 

@@ -119,12 +119,14 @@ export class DrugController {
         limit: Number(limit),
         all: !!all,
       });
-      res.status(HttpStatus.OK).json(
-        ResponseDto.createSuccessResponse("Your drugs retrieved successfully", {
-          data: result.data,
-          pagination: result.pagination,
-        })
-      );
+      res
+        .status(HttpStatus.OK)
+        .json(
+          ResponseDto.createSuccessResponse(
+            "Your drugs retrieved successfully",
+            result
+          )
+        );
     } catch (error) {
       next(error);
     }

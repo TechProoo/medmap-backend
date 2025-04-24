@@ -70,8 +70,11 @@ export class DrugRepository {
 
     // Build WHERE clause parts for raw query
     const conditions: Prisma.Sql[] = [];
+    let useFallbackSearch = false;
+
+    // Only add text search if name is provided
     if (name) {
-      // Use Prisma.sql for safe parameter interpolation
+      // Use Prisma.sql for safe parameter interpolation with full text search
       conditions.push(
         Prisma.sql`d.search_vector @@ websearch_to_tsquery('english', ${name})`
       );
@@ -127,8 +130,65 @@ export class DrugRepository {
       databaseService.$queryRaw<{ count: bigint }[]>(countQuery),
     ]);
 
-    const drugIds = idResults.map((r) => r.id);
-    const total = Number(countResult[0].count);
+    let drugIds = idResults.map((r) => r.id);
+    let total = Number(countResult[0].count);
+
+    // If search by name was attempted but returned no results, use ILIKE as a fallback
+    if (name && drugIds.length === 0) {
+      useFallbackSearch = true;
+
+      // Build fallback conditions using ILIKE for partial matches
+      const fallbackConditions: Prisma.Sql[] = [];
+
+      // Use ILIKE for partial string matching
+      fallbackConditions.push(
+        Prisma.sql`(d.name ILIKE ${`%${name}%`} OR d.description ILIKE ${`%${name}%`})`
+      );
+
+      // Keep all other non-search conditions
+      if (illnessId) {
+        fallbackConditions.push(
+          Prisma.sql`EXISTS (SELECT 1 FROM "IllnessDrug" idr WHERE idr."drugId" = d.id AND idr."illnessId" = ${illnessId})`
+        );
+      }
+      if (minStocks !== undefined) {
+        fallbackConditions.push(Prisma.sql`d.stocks >= ${minStocks}`);
+      }
+      if (maxStocks !== undefined) {
+        fallbackConditions.push(Prisma.sql`d.stocks <= ${maxStocks}`);
+      }
+      if (minPrice !== undefined) {
+        fallbackConditions.push(Prisma.sql`d.price >= ${minPrice}`);
+      }
+      if (maxPrice !== undefined) {
+        fallbackConditions.push(Prisma.sql`d.price <= ${maxPrice}`);
+      }
+
+      const fallbackWhereClause = Prisma.sql`WHERE ${Prisma.join(
+        fallbackConditions,
+        " AND "
+      )}`;
+
+      // Execute fallback queries in a transaction
+      const [fallbackIdResults, fallbackCountResult] =
+        await databaseService.$transaction([
+          databaseService.$queryRaw<{ id: string }[]>(Prisma.sql`
+          SELECT d.id, 0 as rank
+          FROM "Drug" d
+          ${fallbackWhereClause}
+          ORDER BY d.name
+          LIMIT ${takeValue} OFFSET ${skipValue}
+        `),
+          databaseService.$queryRaw<{ count: bigint }[]>(Prisma.sql`
+          SELECT COUNT(d.id)
+          FROM "Drug" d
+          ${fallbackWhereClause}
+        `),
+        ]);
+
+      drugIds = fallbackIdResults.map((r) => r.id);
+      total = Number(fallbackCountResult[0].count);
+    }
 
     if (drugIds.length === 0) {
       return {
@@ -172,6 +232,9 @@ export class DrugRepository {
         totalPages,
         page: currentPage,
         limit: takeValue,
+        searchMethod: useFallbackSearch
+          ? "pattern matching (ILIKE)"
+          : "full text search",
       },
     };
   }

@@ -286,7 +286,12 @@
                   "total": { "type": "integer" },
                   "page": { "type": "integer" },
                   "limit": { "type": "integer" },
-                  "totalPages": { "type": "integer" }
+                  "totalPages": { "type": "integer" },
+                  "searchMethod": {
+                    "type": "string",
+                    "description": "The search method used - either 'full text search' or 'pattern matching (ILIKE)'",
+                    "enum": ["full text search", "pattern matching (ILIKE)"]
+                  }
                 }
               }
             }
@@ -931,7 +936,7 @@
       "get": {
         "tags": ["Drugs"],
         "summary": "Search drugs with pagination",
-        "description": "Search for drugs with various filters and pagination",
+        "description": "Search for drugs with various filters and pagination. Uses full text search for better performance, with automatic fallback to pattern matching (ILIKE) if no results are found.",
         "parameters": [
           {
             "in": "query",
@@ -957,7 +962,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Search by drug name"
+            "description": "Search by drug name or description. Uses full text search first, then falls back to pattern matching if no results found."
           },
           {
             "in": "query",

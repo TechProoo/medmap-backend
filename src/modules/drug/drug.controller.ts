@@ -69,6 +69,8 @@ export class DrugController {
     }
   }
 
+  // testing
+
   static async getDrugById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
